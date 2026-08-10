@@ -126,7 +126,10 @@ function labelMain(cat){return cat==="CAT5E"?"5E":cat==="CAT6A"?"6A":cat==="CAT6
 function isPrimary(cat){return ["CAT5E","CAT6A","CAT6","CAT7"].includes(cat)}
 function currentMaster(){return state.master.filter(m=>m.category===sel.main && (!sel.sub || m.subtype===sel.sub))}
 function showTab(n,b){document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById("tab-"+n).classList.add("active");document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");if(n==="current")renderEntries();if(n==="history")renderHistory();if(n==="settings")renderSettings()}
-function btn(t,a,fn){return `<button class="${a?"active":""}" onclick="${fn}">${esc(t)}</button>`}
+function btn(t,a,fn){
+  const safeFn=String(fn).replace(/&/g,"&amp;").replace(/"/g,"&quot;");
+  return `<button class="${a?"active":""}" onclick="${safeFn}">${esc(t)}</button>`;
+}
 
 function render(){
   const de=document.getElementById("workDate");de.value=activeDate;de.onchange=()=>{activeDate=de.value;renderEntries();updateSummary()};
