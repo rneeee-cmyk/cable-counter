@@ -127,8 +127,10 @@ function isPrimary(cat){return ["CAT5E","CAT6A","CAT6","CAT7"].includes(cat)}
 function currentMaster(){return state.master.filter(m=>m.category===sel.main && (!sel.sub || m.subtype===sel.sub))}
 function showTab(n,b){document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById("tab-"+n).classList.add("active");document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");if(n==="current")renderEntries();if(n==="history")renderHistory();if(n==="settings")renderSettings()}
 function btn(t,a,fn){
-  const safeFn=String(fn).replace(/&/g,"&amp;").replace(/"/g,"&quot;");
-  return `<button class="${a?"active":""}" onclick="${safeFn}">${esc(t)}</button>`;
+  const safeFn=String(fn)
+    .replace(/&/g,"&amp;")
+    .replace(/'/g,"&#39;");
+  return `<button class="${a?"active":""}" onclick='${safeFn}'>${esc(t)}</button>`;
 }
 
 function render(){
@@ -286,6 +288,6 @@ function exportReport(){
 }
 function backupJson(){download(`線材清點備份_${activeDate}.json`,JSON.stringify(state,null,2),"application/json;charset=utf-8")}
 function restoreJson(ev){const f=ev.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const o=JSON.parse(rd.result);if(confirm("匯入會覆蓋目前資料，確定？")){state=o;save();render();renderEntries();renderHistory();renderSettings()}}catch(e){alert("備份格式不正確")}};rd.readAsText(f)}
-render();renderEntries();renderHistory();renderSettings();
+render();renderEntries();renderHistory();renderSettings();document.body.dataset.appReady="1";
 </script>
 </body></html>
