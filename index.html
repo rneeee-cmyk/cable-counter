@@ -208,7 +208,9 @@ function addEntry(){
   const e=entries(),old=e.find(x=>x.key===key);
   if(old)old.qty+=Number(sel.qty);else e.push({key,loc:sel.loc,person,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),time:new Date().toISOString()});
   save();msg.textContent=`已加入：${sel.spec} / ${sel.meter} / ${sel.qty}條`;
-  sel.meter="";sel.qty="";render();
+  // 加入成功後，保留清點日期，但其餘選項全部清空，避免下一筆誤用上一筆選擇。
+  sel={loc:"",person:"",main:"",sub:"",spec:"",meter:"",qty:""};
+  render();
 }
 function renderEntries(){
   const e=entries();document.getElementById("entryCount").textContent=`(${activeDate} / ${e.length} 筆)`;document.getElementById("emptyEntry").classList.toggle("hidden",e.length>0);
