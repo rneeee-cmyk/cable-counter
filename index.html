@@ -27,6 +27,14 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 .status-up{color:#2f6b2f;font-weight:800}.status-down{color:#b00020;font-weight:800}
 .note{background:#fff8e6;border:1px solid #f1d38a;padding:10px;border-radius:10px;font-size:13px}
 @media(max-width:420px){.btn-grid{grid-template-columns:repeat(2,1fr)}.btn-grid.meter{grid-template-columns:repeat(3,1fr)}}
+
+.modal{position:fixed;inset:0;background:#0006;display:flex;align-items:flex-end;justify-content:center;z-index:100}
+.modal.hidden{display:none}
+.modal-panel{width:100%;max-width:760px;max-height:78vh;background:#fff;border-radius:18px 18px 0 0;padding:14px;overflow:auto;box-shadow:0 -4px 20px #0003}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.person-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.person-actions button{font-size:16px}
 </style>
 </head>
 <body>
@@ -44,7 +52,14 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
     </div>
   </div>
   <div class="card"><div class="step">1. 選地點</div><div id="locBtns" class="btn-grid"></div></div>
-  <div class="card"><div class="step">2. 選人員</div><div class="person-row"><select id="personSel"></select><button class="secondary" onclick="clearPerson()">清除</button></div><div class="muted" style="margin-top:6px">只顯示設定中「使用中」的人員。</div></div>
+  <div class="card">
+  <div class="step">2. 選人員</div>
+  <div class="person-actions">
+    <button id="btnNoPerson" onclick="chooseNoPerson()">未指定</button>
+    <button id="btnPickPerson" onclick="openPeopleModal()">選人員</button>
+  </div>
+  <div class="muted" style="margin-top:8px">目前：<b id="personNow">尚未選擇</b></div>
+</div>
   <div class="card"><div class="step">3. 選線材分類</div><div id="catBtns" class="btn-grid cats"></div></div>
   <div id="detailCard" class="card hidden"><div class="step">4. 選後段規格</div><div id="detailBtns" class="btn-grid detail"></div></div>
   <div id="meterCard" class="card hidden"><div class="step">5. 選米數</div><div id="meterBtns" class="btn-grid meter"></div></div>
@@ -101,6 +116,17 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
   </div>
 </section>
 </main>
+
+
+<div id="peopleModal" class="modal hidden">
+  <div class="modal-panel">
+    <div class="modal-head">
+      <div class="step" style="margin:0">選擇人員</div>
+      <button class="secondary" onclick="closePeopleModal()">關閉</button>
+    </div>
+    <div id="peopleBtns" class="people-grid"></div>
+  </div>
+</div>
 
 <nav class="tabs">
 <button class="active" onclick="showTab('input',this)">新增清點</button>
@@ -170,16 +196,47 @@ function renderInput(){
   const dateEl=document.getElementById("workDate");
   if(dateEl){dateEl.value=activeDate;dateEl.onchange=()=>setActiveDate(dateEl.value)}
   document.getElementById("locBtns").innerHTML=state.locations.map((x,i)=>button(x,sel.loc===x,`pickLoc(${i})`)).join("");
-  const activePeople=state.people.filter(p=>p.status!=="停用");
-  const ps=document.getElementById("personSel");
-  ps.innerHTML=`<option value="">請選人員</option>`+activePeople.map(p=>`<option ${sel.person===p.name?"selected":""}>${esc(p.name)}</option>`).join("");
-  ps.onchange=()=>{sel.person=ps.value;updateSummary()};
+  renderPersonState();
   const cats=["5E","5A","6","6A","7","其他"];
   document.getElementById("catBtns").innerHTML=cats.map((x,i)=>button(x,sel.cat===x,`pickCat('${x}')`)).join("");
   renderDetails();renderMeters();renderQty();updateSummary()
 }
 function pickLoc(i){sel.loc=state.locations[i];renderInput()}
-function clearPerson(){sel.person="";renderInput()}
+function chooseNoPerson(){
+  sel.person="__NONE__";
+  renderPersonState();
+  updateSummary();
+}
+function clearPerson(){
+  sel.person="";
+  renderPersonState();
+  updateSummary();
+}
+function openPeopleModal(){
+  const activePeople=state.people.filter(p=>p.status!=="停用");
+  document.getElementById("peopleBtns").innerHTML=activePeople.map((p,i)=>
+    `<button class="${sel.person===p.name?"active":""}" onclick="pickPerson(${JSON.stringify(p.name)})">${esc(p.name)}</button>`
+  ).join("");
+  document.getElementById("peopleModal").classList.remove("hidden");
+}
+function closePeopleModal(){document.getElementById("peopleModal").classList.add("hidden")}
+function pickPerson(name){
+  sel.person=name;
+  closePeopleModal();
+  renderPersonState();
+  updateSummary();
+}
+function renderPersonState(){
+  const noBtn=document.getElementById("btnNoPerson");
+  const pickBtn=document.getElementById("btnPickPerson");
+  const now=document.getElementById("personNow");
+  if(!noBtn||!pickBtn||!now)return;
+  noBtn.classList.toggle("active",sel.person==="__NONE__");
+  pickBtn.classList.toggle("active",sel.person!==""&&sel.person!=="__NONE__");
+  if(sel.person==="__NONE__") now.textContent="未指定";
+  else if(sel.person) now.textContent=sel.person;
+  else now.textContent="尚未選擇";
+}
 function pickCat(c){sel.cat=c;sel.spec="";sel.meter="";sel.qty="";renderInput()}
 function renderDetails(){
   const card=document.getElementById("detailCard"),box=document.getElementById("detailBtns");
@@ -210,7 +267,7 @@ function pickQty(q){sel.qty=q;document.getElementById("customQty").value="";upda
 document.getElementById("customQty").addEventListener("input",e=>{if(Number(e.target.value)>0)sel.qty=Number(e.target.value);updateSummary()});
 function updateSummary(){
   document.getElementById("sLoc").textContent=sel.loc||"尚未選擇";
-  document.getElementById("sPerson").textContent=sel.person||"尚未選擇";
+  document.getElementById("sPerson").textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇");
   document.getElementById("sCable").textContent=sel.spec?`${sel.spec}`:"尚未選擇";
   document.getElementById("sMQ").textContent=sel.meter?`${sel.meter} / ${sel.qty||"?"}`:"—";
 }
@@ -219,16 +276,17 @@ function addEntry(){
   if(custom>0)sel.qty=custom;
   const msg=document.getElementById("addMsg");
   if(!sel.loc)return msg.textContent="請先選地點。";
-  if(!sel.person)return msg.textContent="請先選人員。";
+  if(!sel.person)return msg.textContent="請先按「未指定」或選擇人員。";
   if(!sel.spec)return msg.textContent="請先選線材規格。";
   if(!sel.meter)return msg.textContent="請先選米數。";
   if(!(Number(sel.qty)>0))return msg.textContent="請先選數量。";
-  const key=[sel.loc,sel.person,sel.spec,sel.meter].join("|");
+  const storedPerson=sel.person==="__NONE__"?"":sel.person;
+  const key=[sel.loc,storedPerson,sel.spec,sel.meter].join("|");
   const entries=sessionEntries();
   const old=entries.find(x=>x.key===key);
   if(old){old.qty+=Number(sel.qty);old.time=new Date().toISOString()}
-  else entries.push({key,loc:sel.loc,person:sel.person,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),time:new Date().toISOString()});
-  save();msg.textContent=`已加入：${sel.spec} ${sel.meter} × ${sel.qty}`;
+  else entries.push({key,loc:sel.loc,person:storedPerson,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),time:new Date().toISOString()});
+  save();msg.textContent=`已加入：${sel.spec} ${sel.meter} × ${sel.qty}（${sel.person==="__NONE__"?sel.loc:sel.person}）`;
   sel.meter="";sel.qty="";document.getElementById("customQty").value="";renderInput()
 }
 function renderEntries(){
@@ -236,7 +294,7 @@ function renderEntries(){
   const entries=sessionEntries();
   document.getElementById("entryCount").textContent=`(${activeDate} / ${entries.length} 筆)`;
   empty.classList.toggle("hidden",entries.length>0);
-  box.innerHTML=entries.map((x,i)=>`<div class="list-item"><div><div class="item-title">${esc(x.spec)}　${esc(x.meter)}　× ${x.qty}</div><div class="item-meta">${esc(x.loc)} / ${esc(x.person)}</div></div><div class="item-actions"><button onclick="adjust(${i},-1)">−</button><button onclick="adjust(${i},1)">＋</button><button class="danger" onclick="delEntry(${i})">刪</button></div></div>`).join("")
+  box.innerHTML=entries.map((x,i)=>`<div class="list-item"><div><div class="item-title">${esc(x.spec)}　${esc(x.meter)}　× ${x.qty}</div><div class="item-meta">${esc(x.loc)} / ${esc(x.person||"未指定")}</div></div><div class="item-actions"><button onclick="adjust(${i},-1)">−</button><button onclick="adjust(${i},1)">＋</button><button class="danger" onclick="delEntry(${i})">刪</button></div></div>`).join("")
 }
 function adjust(i,d){const e=sessionEntries();e[i].qty+=d;if(e[i].qty<=0)e.splice(i,1);save();renderEntries()}
 function delEntry(i){if(confirm("刪除這筆清點？")){sessionEntries().splice(i,1);save();renderEntries()}}
