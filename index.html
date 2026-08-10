@@ -13,32 +13,22 @@ header{position:sticky;top:0;z-index:20;background:var(--nav);color:#fff;padding
 header .title{font-weight:800;font-size:19px}header .sub{font-size:12px;opacity:.86;margin-top:2px}
 main{max-width:760px;margin:auto;padding:12px 12px 90px}.card{background:#fff;border-radius:14px;padding:14px;margin:10px 0;box-shadow:0 2px 10px #00000010;border:1px solid #e8edf3}
 .step{font-weight:800;margin-bottom:9px}.summary{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pill{background:var(--pale);border:1px solid var(--line);border-radius:10px;padding:9px;font-size:13px}.pill b{display:block;font-size:15px;margin-top:2px}
-.btn-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.btn-grid.cats{grid-template-columns:repeat(3,1fr)}.btn-grid.detail{grid-template-columns:repeat(2,1fr)}.btn-grid.meter{grid-template-columns:repeat(4,1fr)}
+.btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btn-grid.locations{grid-template-columns:repeat(4,1fr)}.btn-grid.meter{grid-template-columns:repeat(4,1fr)}
 button{appearance:none;border:1px solid #aebdce;background:#fff;border-radius:11px;padding:11px 7px;font-size:15px;font-weight:700;min-height:46px;color:#1f2937}
 button.active{background:var(--blue);color:#fff;border-color:var(--blue)}button.primary{width:100%;background:var(--green);color:#fff;border:0;font-size:17px;padding:14px}button.secondary{background:#eef2f7}button.danger{background:#fff;color:var(--red);border-color:#e8a2a2}
-select,input{width:100%;font-size:16px;padding:12px;border:1px solid #b9c5d1;border-radius:10px;background:#fff}
-.person-row{display:grid;grid-template-columns:1fr auto;gap:8px}.muted{color:#6b7280;font-size:13px}.hidden{display:none!important}
-.qty{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.qty button{min-height:42px}.custom-qty{margin-top:8px}
+input,select{width:100%;font-size:16px;padding:12px;border:1px solid #b9c5d1;border-radius:10px;background:#fff}.muted{color:#6b7280;font-size:13px}.hidden{display:none!important}
+.person-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.qty{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.qty button{min-height:42px}
 .list-item{border-top:1px solid #edf0f4;padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:8px}.list-item:first-child{border-top:0}.item-title{font-weight:800}.item-meta{font-size:13px;color:#64748b;margin-top:3px}.item-actions{display:flex;gap:5px;align-items:center}.item-actions button{min-height:34px;padding:5px 9px;font-size:14px}
 .tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dfe5ec;display:grid;grid-template-columns:repeat(4,1fr);z-index:30;padding-bottom:env(safe-area-inset-bottom)}
-.tabs button{border:0;border-radius:0;background:#fff;font-size:12px;padding:9px 2px;min-height:52px}.tabs button.active{color:var(--blue);background:#eef4fb}
-.tab{display:none}.tab.active{display:block}.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar button{flex:1}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #e8edf2;padding:7px;text-align:left;vertical-align:top}th{background:#f3f6fa;position:sticky;top:67px}
-.status-up{color:#2f6b2f;font-weight:800}.status-down{color:#b00020;font-weight:800}
-.note{background:#fff8e6;border:1px solid #f1d38a;padding:10px;border-radius:10px;font-size:13px}
-@media(max-width:420px){.btn-grid{grid-template-columns:repeat(2,1fr)}.btn-grid.meter{grid-template-columns:repeat(3,1fr)}}
-
-.modal{position:fixed;inset:0;background:#0006;display:flex;align-items:flex-end;justify-content:center;z-index:100}
-.modal.hidden{display:none}
-.modal-panel{width:100%;max-width:760px;max-height:78vh;background:#fff;border-radius:18px 18px 0 0;padding:14px;overflow:auto;box-shadow:0 -4px 20px #0003}
-.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.person-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.person-actions button{font-size:16px}
+.tabs button{border:0;border-radius:0;background:#fff;font-size:12px;padding:9px 2px;min-height:52px}.tabs button.active{color:var(--blue);background:#eef4fb}.tab{display:none}.tab.active{display:block}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar button{flex:1}.note{background:#fff8e6;border:1px solid #f1d38a;padding:10px;border-radius:10px;font-size:13px}
+.modal{position:fixed;inset:0;background:#0006;display:flex;align-items:flex-end;justify-content:center;z-index:100}.modal.hidden{display:none}.modal-panel{width:100%;max-width:760px;max-height:78vh;background:#fff;border-radius:18px 18px 0 0;padding:14px;overflow:auto}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #e8edf2;padding:7px;text-align:left;vertical-align:top}th{background:#f3f6fa}
+@media(max-width:430px){.btn-grid.locations{grid-template-columns:repeat(2,1fr)}.btn-grid.meter{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
-<header><div class="title">線材現場清點</div><div class="sub">手機輸入 → 匯出 Excel 可開啟報表</div></header>
+<header><div class="title">線材現場清點</div><div class="sub">線材規格以「cable一覽」為準</div></header>
 <main>
 <section id="tab-input" class="tab active">
   <div class="card">
@@ -48,354 +38,251 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
       <div class="pill">地點<b id="sLoc">尚未選擇</b></div>
       <div class="pill">人員<b id="sPerson">尚未選擇</b></div>
       <div class="pill">線材<b id="sCable">尚未選擇</b></div>
-      <div class="pill">米數 / 數量<b id="sMQ">—</b></div>
+      <div class="pill">米數<b id="sMeter">尚未選擇</b></div>
+      <div class="pill">數量<b id="sQty">尚未選擇</b></div>
     </div>
   </div>
-  <div class="card"><div class="step">1. 選地點</div><div id="locBtns" class="btn-grid"></div></div>
+
+  <div class="card"><div class="step">1. 選地點</div><div id="locBtns" class="btn-grid locations"></div></div>
+
   <div class="card">
-  <div class="step">2. 選人員</div>
-  <div class="person-actions">
-    <button id="btnNoPerson" onclick="chooseNoPerson()">未指定</button>
-    <button id="btnPickPerson" onclick="openPeopleModal()">選人員</button>
+    <div class="step">2. 選人員</div>
+    <div class="person-actions">
+      <button id="btnNoPerson" onclick="chooseNoPerson()">未指定</button>
+      <button id="btnPickPerson" onclick="openPeopleModal()">選人員</button>
+    </div>
+    <div class="muted" style="margin-top:8px">目前：<b id="personNow">尚未選擇</b></div>
   </div>
-  <div class="muted" style="margin-top:8px">目前：<b id="personNow">尚未選擇</b></div>
-</div>
-  <div class="card"><div class="step">3. 選線材分類</div><div id="catBtns" class="btn-grid cats"></div></div>
-  <div id="detailCard" class="card hidden"><div class="step">4. 選後段規格</div><div id="detailBtns" class="btn-grid detail"></div></div>
-  <div id="meterCard" class="card hidden"><div class="step">5. 選米數</div><div id="meterBtns" class="btn-grid meter"></div></div>
-  <div id="qtyCard" class="card hidden"><div class="step">6. 選數量</div><div id="qtyBtns" class="qty"></div><div class="custom-qty"><input id="customQty" type="number" min="1" inputmode="numeric" placeholder="其他數量可直接輸入"></div></div>
+
+  <div class="card"><div class="step">3. 選線材</div><div id="catBtns" class="btn-grid"></div></div>
+  <div id="subCard" class="card hidden"><div class="step" id="subTitle">4. 選規格</div><div id="subBtns" class="btn-grid"></div></div>
+
+  <div id="meterCard" class="card hidden">
+    <div class="step">5. 選米數</div>
+    <div class="muted" style="margin-bottom:8px">只會顯示這個線材在 cable一覽 中實際存在的米數。</div>
+    <div id="meterBtns" class="btn-grid meter"></div>
+  </div>
+
+  <div id="qtyCard" class="card hidden">
+    <div class="step">6. 選數量</div>
+    <div class="muted" style="margin-bottom:8px">這裡是「你現在這個地點/人員實際點到幾條」，直接按 1～5。</div>
+    <div id="qtyBtns" class="qty"></div>
+    
+  </div>
+
   <div class="card"><button class="primary" onclick="addEntry()">＋ 加入本次清點</button><div id="addMsg" class="muted" style="margin-top:8px"></div></div>
 </section>
 
 <section id="tab-current" class="tab">
+  <div class="card"><div class="step">本次已清點 <span id="entryCount"></span></div><div id="entryList"></div><div id="emptyEntry" class="muted">尚未加入資料。</div></div>
   <div class="card">
-    <div class="step">本次已清點 <span id="entryCount"></span></div>
-    <div id="entryList"></div>
-    <div id="emptyEntry" class="muted">尚未加入資料。</div>
-  </div>
-  <div class="card">
-    <div class="toolbar">
-      <button class="secondary" onclick="exportExcelXml(false)">匯出 Excel 報表</button>
-      <button class="secondary" onclick="exportCurrentCsv()">匯出 CSV</button>
-    </div>
-    <div style="height:8px"></div>
-    <button class="primary" onclick="finishSession()">確認完成本次清點</button>
-    <div class="note" style="margin-top:10px">完成後會把本次結果加入「歷史紀錄」。同一清點日期再次輸入時會繼續合併在同一天；沒清點到的線材不會被當成 0。</div>
+    <div class="toolbar"><button class="secondary" onclick="exportReport()">匯出 Excel 報表</button><button class="secondary" onclick="exportCurrentCsv()">匯出 CSV 明細</button></div>
+    <div class="note" style="margin-top:10px">Excel 報表版型會比照你提供的「清點匯出excel結果」：規格、米數、總數量、清點數量、差異，以及位置分欄。</div>
+    <button class="primary" style="margin-top:10px" onclick="finishSession()">確認完成本次清點</button>
   </div>
 </section>
 
-<section id="tab-history" class="tab">
-  <div class="card">
-    <div class="step">歷史紀錄</div>
-    <div class="toolbar"><button class="secondary" onclick="exportExcelXml(true)">匯出含歷史 Excel 報表</button><button class="danger" onclick="clearHistory()">清除歷史</button></div>
-  </div>
-  <div class="card" style="overflow:auto"><div id="historyBox"></div></div>
-</section>
-
+<section id="tab-history" class="tab"><div class="card"><div class="step">歷史紀錄</div><div id="historyBox"></div></div></section>
 <section id="tab-settings" class="tab">
-  <div class="card">
-    <div class="step">人員設定</div>
-    <div class="row2"><input id="newPerson" placeholder="輸入新人姓名"><button class="secondary" onclick="addPerson()">新增人員</button></div>
-    <div id="peopleList" style="margin-top:10px"></div>
-  </div>
-  <div class="card">
-    <div class="step">地點設定</div>
-    <div class="row2"><input id="newLoc" placeholder="例如：座位區"><button class="secondary" onclick="addLocation()">新增地點</button></div>
-    <div id="locationList" style="margin-top:10px"></div>
-  </div>
-  <div class="card">
-    <div class="step">線材主檔</div>
-    <div class="muted">若之後新增線材，可在這裡新增；匯出的 Excel 也會包含。</div>
-    <div class="row2" style="margin-top:8px"><input id="newSpec" placeholder="例：CAT6A / UTP"><input id="newMeter" placeholder="例：30M"></div>
-    <div class="row2" style="margin-top:8px"><input id="newTotal" type="number" inputmode="numeric" placeholder="購入總數量"><button class="secondary" onclick="addCable()">新增線材</button></div>
-  </div>
-  <div class="card">
-    <div class="step">備份 / 還原</div>
-    <div class="toolbar"><button class="secondary" onclick="backupJson()">匯出備份</button><button class="secondary" onclick="document.getElementById('restoreFile').click()">匯入備份</button><input id="restoreFile" type="file" accept=".json,application/json" class="hidden" onchange="restoreJson(event)"></div>
-    <div class="muted" style="margin-top:8px">手機瀏覽器資料若被清除會遺失，所以建議定期匯出備份。</div>
-  </div>
+  <div class="card"><div class="step">人員設定</div><div style="display:grid;grid-template-columns:1fr auto;gap:8px"><input id="newPerson" placeholder="輸入新人姓名"><button class="secondary" onclick="addPerson()">新增</button></div><div id="peopleList"></div></div>
+  <div class="card"><div class="step">備份</div><div class="toolbar"><button class="secondary" onclick="backupJson()">匯出備份</button><button class="secondary" onclick="document.getElementById('restoreFile').click()">匯入備份</button></div><input id="restoreFile" type="file" accept=".json" class="hidden" onchange="restoreJson(event)"></div>
 </section>
 </main>
 
-
-<div id="peopleModal" class="modal hidden">
-  <div class="modal-panel">
-    <div class="modal-head">
-      <div class="step" style="margin:0">選擇人員</div>
-      <button class="secondary" onclick="closePeopleModal()">關閉</button>
-    </div>
-    <div id="peopleBtns" class="people-grid"></div>
-  </div>
-</div>
+<div id="peopleModal" class="modal hidden"><div class="modal-panel"><div class="modal-head"><div class="step" style="margin:0">選擇人員</div><button class="secondary" onclick="closePeopleModal()">關閉</button></div><div id="peopleBtns" class="people-grid"></div></div></div>
 
 <nav class="tabs">
-<button class="active" onclick="showTab('input',this)">新增清點</button>
-<button onclick="showTab('current',this)">本次明細</button>
-<button onclick="showTab('history',this)">歷史</button>
-<button onclick="showTab('settings',this)">設定</button>
+<button class="active" onclick="showTab('input',this)">新增清點</button><button onclick="showTab('current',this)">本次明細</button><button onclick="showTab('history',this)">歷史</button><button onclick="showTab('settings',this)">設定</button>
 </nav>
 
 <script>
-const SEED = {"version": 1, "locations": ["LAB1", "LAB2", "LAB3", "EMC LAB"], "people": [{"name": "郭益男", "status": "使用中"}, {"name": "吳瑞郁", "status": "使用中"}, {"name": "林怡伸", "status": "使用中"}, {"name": "黃盈諳", "status": "使用中"}, {"name": "王建龍", "status": "使用中"}, {"name": "陳建廷", "status": "使用中"}, {"name": "陳怡吉", "status": "使用中"}, {"name": "張世澔", "status": "使用中"}, {"name": "王佳榆", "status": "使用中"}, {"name": "李建生", "status": "使用中"}, {"name": "劉致遠", "status": "使用中"}, {"name": "陳姵伶", "status": "使用中"}, {"name": "周政瑩", "status": "使用中"}, {"name": "郭映彣", "status": "使用中"}, {"name": "黃家靖", "status": "使用中"}, {"name": "王韻茹", "status": "使用中"}, {"name": "蔡依庭", "status": "使用中"}, {"name": "連漢文", "status": "使用中"}, {"name": "陳奕帆", "status": "使用中"}, {"name": "侯力彰", "status": "使用中"}, {"name": "曾郭中", "status": "使用中"}, {"name": "徐珮瑋", "status": "使用中"}, {"name": "林育愷", "status": "使用中"}, {"name": "陳育華", "status": "使用中"}, {"name": "陳淇平", "status": "使用中"}, {"name": "黃子維", "status": "使用中"}, {"name": "賴柏儒", "status": "使用中"}, {"name": "劉峻宏", "status": "使用中"}, {"name": "黃俊仁", "status": "使用中"}, {"name": "李長運", "status": "使用中"}, {"name": "徐葳", "status": "使用中"}, {"name": "謝昆霖", "status": "使用中"}, {"name": "陳思絜", "status": "使用中"}, {"name": "周孟賢", "status": "使用中"}, {"name": "黃煦閎", "status": "使用中"}, {"name": "陳星宇", "status": "使用中"}, {"name": "林佳妮", "status": "使用中"}, {"name": "陳潤安", "status": "使用中"}, {"name": "李宥橙", "status": "使用中"}, {"name": "方志豪", "status": "使用中"}, {"name": "呂易庭", "status": "使用中"}, {"name": "温之飴", "status": "使用中"}, {"name": "許庭漢", "status": "使用中"}, {"name": "羅天翔", "status": "使用中"}, {"name": "曹宇慶", "status": "使用中"}, {"name": "方瑋立", "status": "使用中"}, {"name": "張原瑋", "status": "使用中"}], "master": [{"spec": "CAT5E / UTP", "meter": "10M", "total": 9, "prev": 5, "prevPos": "相容性*1、LAB2*2、政瑩*2、LAB2*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "15M", "total": 2, "prev": 2, "prevPos": "漢文*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "20M", "total": 4, "prev": 3, "prevPos": "佳妮*1、柏儒*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "30M", "total": 5, "prev": 4, "prevPos": "漢文*1、柏儒*1、LAB2*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "40M", "total": 4, "prev": 4, "prevPos": "佳妮*1、LAB2*1、LAB2*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "50M", "total": 4, "prev": 4, "prevPos": "佳妮*2、柏儒*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "55M", "total": 3, "prev": 2, "prevPos": "力彰*1、映彣*1"}, {"spec": "CAT5E / UTP", "meter": "60M", "total": 3, "prev": 2, "prevPos": "佳妮*1、依庭*1"}, {"spec": "CAT5E / UTP", "meter": "65M", "total": 4, "prev": 2, "prevPos": "漢文*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "70M", "total": 4, "prev": 3, "prevPos": "佳妮*1、柏儒*1"}, {"spec": "CAT5E / UTP", "meter": "80M", "total": 7, "prev": 6, "prevPos": "LAB2*1、LAB2*1、LAB2*1、EMC LAB*1"}, {"spec": "CAT5E / UTP", "meter": "90M", "total": 7, "prev": 6, "prevPos": "諳姐*1、柏儒*1、LAB2*1、LAB2*1、EMC LAB*1"}, {"spec": "CAT5E / UTP", "meter": "100M", "total": 5, "prev": 5, "prevPos": "佳妮*2、LAB2*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "110M", "total": 9, "prev": 5, "prevPos": "力彰*1、怡伸*1、柏儒*1、LAB2*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "120M", "total": 10, "prev": 8, "prevPos": "Tim*1、Willie*2、怡伸*2、澔哥*1、峻宏*1"}, {"spec": "CAT5E / UTP", "meter": "130M", "total": 5, "prev": 10, "prevPos": "漢文*1、Tim*1、相容性*1、柏儒*2、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "140M", "total": 7, "prev": 8, "prevPos": "怡伸*1、LAB2*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "150M", "total": 5, "prev": 5, "prevPos": "龍哥*1、LAB2*1、LAB2*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "160M", "total": 3, "prev": 5, "prevPos": "龍哥*1"}, {"spec": "CAT5E / UTP", "meter": "170M", "total": 2, "prev": 3, "prevPos": "LAB2*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "180M", "total": 1, "prev": 1, "prevPos": "LAB2*1、LAB2*1、LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "300M", "total": 2, "prev": 0, "prevPos": "LAB1*1"}, {"spec": "CAT5E / UTP", "meter": "350M", "total": 2, "prev": 2, "prevPos": "LAB2*1、LAB3*1"}, {"spec": "CAT5E / UTP", "meter": "400M", "total": 1, "prev": 0, "prevPos": "LAB2*1"}, {"spec": "CAT5E / UTP", "meter": "500M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "CAT5E / UTP", "meter": "600M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"spec": "CAT5E / UTP", "meter": "700M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "CAT5E / UTP", "meter": "750M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "CAT5E / UTP", "meter": "800M", "total": 3, "prev": 2, "prevPos": "5F-LAB3*3"}, {"spec": "CAT5E / UTP", "meter": "850M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"spec": "CAT5E / UTP", "meter": "900M", "total": 2, "prev": 1, "prevPos": "5F-LAB3*2"}, {"spec": "CAT5E / FUTP", "meter": "10M", "total": 4, "prev": 2, "prevPos": "LAB3*2"}, {"spec": "CAT5E / FUTP", "meter": "20M", "total": 2, "prev": 2, "prevPos": "LAB3*1、LAB1*1"}, {"spec": "CAT5E / FUTP", "meter": "30M", "total": 2, "prev": 1, "prevPos": "LAB3*1"}, {"spec": "CAT5E / FUTP", "meter": "40M", "total": 1, "prev": 1, "prevPos": "LAB3*1"}, {"spec": "CAT5E / FUTP", "meter": "50M", "total": 1, "prev": 1, "prevPos": "LAB3*1"}, {"spec": "CAT5E / FUTP", "meter": "60M", "total": 2, "prev": 2, "prevPos": "LAB3*2"}, {"spec": "CAT5E / FUTP", "meter": "70M", "total": 1, "prev": 1, "prevPos": "LAB3*1"}, {"spec": "CAT5E / FUTP", "meter": "80M", "total": 2, "prev": 1, "prevPos": "LAB3*2"}, {"spec": "CAT5E / FUTP", "meter": "90M", "total": 2, "prev": 3, "prevPos": "LAB3*2"}, {"spec": "CAT5E / FUTP", "meter": "100M", "total": 2, "prev": 2, "prevPos": "LAB3*1、Rusty*1"}, {"spec": "CAT5E / FUTP", "meter": "110M", "total": 2, "prev": 2, "prevPos": "LAB3*1、Rusty*1"}, {"spec": "CAT5E / FUTP", "meter": "120M", "total": 2, "prev": 2, "prevPos": "LAB3*2"}, {"spec": "CAT5E / FUTP", "meter": "130M", "total": 2, "prev": 2, "prevPos": "LAB3*2"}, {"spec": "CAT5E / FUTP", "meter": "140M", "total": 2, "prev": 1, "prevPos": "LAB3*2"}, {"spec": "CAT5E / FUTP", "meter": "150M", "total": 2, "prev": 1, "prevPos": "EMC LAB*1"}, {"spec": "CAT5E / FUTP", "meter": "160M", "total": 2, "prev": 3, "prevPos": "LAB3*1、LAB2*1"}, {"spec": "CAT5E / FUTP", "meter": "170M", "total": 2, "prev": 2, "prevPos": "LAB3*2"}, {"spec": "CAT5E / FUTP", "meter": "180M", "total": 2, "prev": 2, "prevPos": "LAB3*2"}, {"spec": "CAT5E / FUTP", "meter": "190M", "total": 2, "prev": 2, "prevPos": "LAB2*1、LAB3*1"}, {"spec": "CAT5E / FUTP", "meter": "200M", "total": 2, "prev": 2, "prevPos": "LAB3*1、LAB2*1"}, {"spec": "CAT5E / FUTP", "meter": "210M", "total": 2, "prev": 1, "prevPos": "LAB3*1"}, {"spec": "CAT5E / FUTP", "meter": "220M", "total": 3, "prev": 2, "prevPos": "LAB3*2、LAB2*1"}, {"spec": "CAT5E / FUTP", "meter": "230M", "total": 1, "prev": 1, "prevPos": "LAB3*1"}, {"spec": "CAT5E / FUTP", "meter": "240M", "total": 1, "prev": 1, "prevPos": "LAB3*1"}, {"spec": "CAT5E/STP", "meter": "25M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"spec": "CAT5E/STP", "meter": "84M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"spec": "CAT5E/STP", "meter": "100M", "total": 2, "prev": 0, "prevPos": "5F-LAB3*2"}, {"spec": "CAT6A/SFTP", "meter": "10M", "total": 3, "prev": 1, "prevPos": "佳妮*1"}, {"spec": "CAT6A/SFTP", "meter": "20M", "total": 3, "prev": 3, "prevPos": "LAB2*1、LAB3*1"}, {"spec": "CAT6A/SFTP", "meter": "30M", "total": 3, "prev": 3, "prevPos": "漢文*1、益男哥*1、LAB3*1"}, {"spec": "CAT6A/SFTP", "meter": "40M", "total": 3, "prev": 3, "prevPos": "LAB3*3"}, {"spec": "CAT6A/SFTP", "meter": "50M", "total": 6, "prev": 4, "prevPos": "柏儒*1、Rusty*1、依庭*1、LAB2*1、FT*1"}, {"spec": "CAT6A/SFTP", "meter": "55M", "total": 5, "prev": 5, "prevPos": "LAB3*3"}, {"spec": "CAT6A/SFTP", "meter": "60M", "total": 4, "prev": 3, "prevPos": "柏儒*1、相容性*1、依庭*1、LAB2*1"}, {"spec": "CAT6A/SFTP", "meter": "70M", "total": 3, "prev": 4, "prevPos": "LAB3*1"}, {"spec": "CAT6A/SFTP", "meter": "80M", "total": 5, "prev": 5, "prevPos": "LAB3*2"}, {"spec": "CAT6A/SFTP", "meter": "90M", "total": 5, "prev": 7, "prevPos": "依庭*1、諳姐*1、LAB2*2、LAB3*2"}, {"spec": "CAT6A/SFTP", "meter": "100M", "total": 10, "prev": 9, "prevPos": "漢文*1、怡伸*1、LAB2*4"}, {"spec": "CAT6A/SFTP", "meter": "110M", "total": 10, "prev": 9, "prevPos": "Willie*1、姵伶*1、LAB2*3"}, {"spec": "CAT6A/SFTP", "meter": "120M", "total": 7, "prev": 5, "prevPos": "LAB2*1、LAB3*5"}, {"spec": "CAT6A/UTP", "meter": "10M", "total": 3, "prev": 3, "prevPos": "5F-LAB3*1、LAB2*2"}, {"spec": "CAT6A/UTP", "meter": "20M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "CAT6A/UTP", "meter": "50M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "CAT6A/UTP", "meter": "60M", "total": 2, "prev": 1, "prevPos": "5F-LAB3*1、LAB2*1"}, {"spec": "CAT6A/UTP", "meter": "90M", "total": 3, "prev": 2, "prevPos": "5F-LAB3*1、LAB2*2"}, {"spec": "CAT6A/UTP", "meter": "100M", "total": 2, "prev": 2, "prevPos": "Tim*1、LAB2*1"}, {"spec": "CAT6A/UTP", "meter": "110M", "total": 3, "prev": 2, "prevPos": "5F-LAB3*3、郭中*1"}, {"spec": "CAT6A/UTP", "meter": "120M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "CAT6/UTP", "meter": "10M", "total": 0, "prev": 0, "prevPos": "LAB1*1"}, {"spec": "CAT6/UTP", "meter": "40M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "CAT6/UTP", "meter": "80M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "CAT6/UTP", "meter": "100M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "CAT6/UTP", "meter": "120M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "CAT6A/FUTP", "meter": "100M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "CAT6A/FUTP", "meter": "110M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "CAT6A/FUTP", "meter": "120M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "CAT6A/FUTP", "meter": "220M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "CAT7/ISIP", "meter": "10M", "total": 1, "prev": 0, "prevPos": "王紹丞*1"}, {"spec": "CAT7/ISIP", "meter": "20M", "total": 1, "prev": 0, "prevPos": "王紹丞*1"}, {"spec": "CAT7/ISIP", "meter": "30M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"spec": "CAT7/ISIP", "meter": "40M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"spec": "CAT7/ISIP", "meter": "50M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"spec": "CAT7/ISIP", "meter": "60M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"spec": "CAT7/ISIP", "meter": "70M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"spec": "CAT7/ISIP", "meter": "80M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"spec": "CAT7/ISIP", "meter": "90M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"spec": "CAT7/ISIP", "meter": "120M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "CAT8", "meter": "20M", "total": 1, "prev": 0, "prevPos": "彥貴*1"}, {"spec": "75-5", "meter": "50M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "100M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "200M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "300M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "400M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "500M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "550M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "600M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "700M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "800M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "900M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "950M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "1000M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "1050M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-5", "meter": "1100M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-3", "meter": "50M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-3", "meter": "100M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-3", "meter": "200M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-3", "meter": "400M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-3", "meter": "450M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "75-3", "meter": "500M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "AWG18", "meter": "2M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "AWG18", "meter": "100M", "total": 12, "prev": 12, "prevPos": "5F-LAB3*12"}, {"spec": "AWG18", "meter": "1000M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "AWG26", "meter": "2M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "AWG26", "meter": "40M", "total": 12, "prev": 12, "prevPos": "5F-LAB3*12"}, {"spec": "Belden 3076F", "meter": "2M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"spec": "Belden 3076F", "meter": "50M", "total": 12, "prev": 12, "prevPos": "5F-LAB3*12"}, {"spec": "韓國線", "meter": "80M(2P)", "total": 1, "prev": 1, "prevPos": "相容性"}, {"spec": "韓國線", "meter": "80M(4P)", "total": 1, "prev": 1, "prevPos": "相容性"}, {"spec": "韓國線", "meter": "90M(2P)", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "韓國線", "meter": "90M(4P)", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"spec": "韓國線", "meter": "箱裝", "total": 1, "prev": 1, "prevPos": "演算法LAB2*1"}, {"spec": "線車", "meter": "CAT5E/UTP-10M~160M", "total": 2, "prev": 2, "prevPos": "LAB1*2"}, {"spec": "線車", "meter": "線車#3\nCAT6A/SFTP-10M~120M", "total": 1, "prev": 1, "prevPos": "LAB1*1"}, {"spec": "光纖", "meter": "8050M", "total": 2, "prev": 2, "prevPos": "怡伸座位*1"}]};
+const SEED={"version": 4, "locations": ["LAB1", "LAB2", "LAB3", "EMC LAB"], "people": [{"name": "郭益男", "status": "使用中"}, {"name": "吳瑞郁", "status": "使用中"}, {"name": "林怡伸", "status": "使用中"}, {"name": "黃盈諳", "status": "使用中"}, {"name": "王建龍", "status": "使用中"}, {"name": "陳建廷", "status": "使用中"}, {"name": "陳怡吉", "status": "使用中"}, {"name": "張世澔", "status": "使用中"}, {"name": "王佳榆", "status": "使用中"}, {"name": "李建生", "status": "使用中"}, {"name": "劉致遠", "status": "使用中"}, {"name": "陳姵伶", "status": "使用中"}, {"name": "周政瑩", "status": "使用中"}, {"name": "郭映彣", "status": "使用中"}, {"name": "黃家靖", "status": "使用中"}, {"name": "王韻茹", "status": "使用中"}, {"name": "蔡依庭", "status": "使用中"}, {"name": "連漢文", "status": "使用中"}, {"name": "陳奕帆", "status": "使用中"}, {"name": "侯力彰", "status": "使用中"}, {"name": "曾郭中", "status": "使用中"}, {"name": "徐珮瑋", "status": "使用中"}, {"name": "林育愷", "status": "使用中"}, {"name": "陳育華", "status": "使用中"}, {"name": "陳淇平", "status": "使用中"}, {"name": "黃子維", "status": "使用中"}, {"name": "賴柏儒", "status": "使用中"}, {"name": "劉峻宏", "status": "使用中"}, {"name": "黃俊仁", "status": "使用中"}, {"name": "李長運", "status": "使用中"}, {"name": "徐葳", "status": "使用中"}, {"name": "謝昆霖", "status": "使用中"}, {"name": "陳思絜", "status": "使用中"}, {"name": "周孟賢", "status": "使用中"}, {"name": "黃煦閎", "status": "使用中"}, {"name": "陳星宇", "status": "使用中"}, {"name": "林佳妮", "status": "使用中"}, {"name": "陳潤安", "status": "使用中"}, {"name": "李宥橙", "status": "使用中"}, {"name": "方志豪", "status": "使用中"}, {"name": "呂易庭", "status": "使用中"}, {"name": "温之飴", "status": "使用中"}, {"name": "許庭漢", "status": "使用中"}, {"name": "羅天翔", "status": "使用中"}, {"name": "曹宇慶", "status": "使用中"}, {"name": "方瑋立", "status": "使用中"}, {"name": "張原瑋", "status": "使用中"}], "master": [{"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "10M", "total": 9, "prev": 5, "prevPos": "相容性*1、LAB2*2、政瑩*2、LAB2*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "15M", "total": 2, "prev": 2, "prevPos": "漢文*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "20M", "total": 4, "prev": 3, "prevPos": "佳妮*1、柏儒*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "30M", "total": 5, "prev": 4, "prevPos": "漢文*1、柏儒*1、LAB2*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "40M", "total": 4, "prev": 4, "prevPos": "佳妮*1、LAB2*1、LAB2*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "50M", "total": 4, "prev": 4, "prevPos": "佳妮*2、柏儒*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "55M", "total": 3, "prev": 2, "prevPos": "力彰*1、映彣*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "60M", "total": 3, "prev": 2, "prevPos": "佳妮*1、依庭*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "65M", "total": 4, "prev": 2, "prevPos": "漢文*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "70M", "total": 4, "prev": 3, "prevPos": "佳妮*1、柏儒*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "80M", "total": 7, "prev": 6, "prevPos": "LAB2*1、LAB2*1、LAB2*1、EMC LAB*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "90M", "total": 7, "prev": 6, "prevPos": "諳姐*1、柏儒*1、LAB2*1、LAB2*1、EMC LAB*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "100M", "total": 5, "prev": 5, "prevPos": "佳妮*2、LAB2*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "110M", "total": 9, "prev": 5, "prevPos": "力彰*1、怡伸*1、柏儒*1、LAB2*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "120M", "total": 10, "prev": 8, "prevPos": "Tim*1、Willie*2、怡伸*2、澔哥*1、峻宏*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "130M", "total": 5, "prev": 10, "prevPos": "漢文*1、Tim*1、相容性*1、柏儒*2、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "140M", "total": 7, "prev": 8, "prevPos": "怡伸*1、LAB2*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "150M", "total": 5, "prev": 5, "prevPos": "龍哥*1、LAB2*1、LAB2*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "160M", "total": 3, "prev": 5, "prevPos": "龍哥*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "170M", "total": 2, "prev": 3, "prevPos": "LAB2*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "180M", "total": 1, "prev": 1, "prevPos": "LAB2*1、LAB2*1、LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "300M", "total": 2, "prev": 0, "prevPos": "LAB1*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "350M", "total": 2, "prev": 2, "prevPos": "LAB2*1、LAB3*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "400M", "total": 1, "prev": 0, "prevPos": "LAB2*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "500M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "600M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "700M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "750M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "800M", "total": 3, "prev": 2, "prevPos": "5F-LAB3*3"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "850M", "total": 1, "prev": 0, "prevPos": "5F-LAB3*1"}, {"category": "CAT5E", "subtype": "UTP", "spec": "CAT5E / UTP", "meter": "900M", "total": 2, "prev": 1, "prevPos": "5F-LAB3*2"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "10M", "total": 4, "prev": 2, "prevPos": "LAB3*2"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "20M", "total": 2, "prev": 2, "prevPos": "LAB3*1、LAB1*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "30M", "total": 2, "prev": 1, "prevPos": "LAB3*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "40M", "total": 1, "prev": 1, "prevPos": "LAB3*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "50M", "total": 1, "prev": 1, "prevPos": "LAB3*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "60M", "total": 2, "prev": 2, "prevPos": "LAB3*2"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "70M", "total": 1, "prev": 1, "prevPos": "LAB3*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "80M", "total": 2, "prev": 1, "prevPos": "LAB3*2"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "90M", "total": 2, "prev": 3, "prevPos": "LAB3*2"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "100M", "total": 2, "prev": 2, "prevPos": "LAB3*1、Rusty*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "110M", "total": 2, "prev": 2, "prevPos": "LAB3*1、Rusty*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "120M", "total": 2, "prev": 2, "prevPos": "LAB3*2"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "130M", "total": 2, "prev": 2, "prevPos": "LAB3*2"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "140M", "total": 2, "prev": 1, "prevPos": "LAB3*2"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "150M", "total": 2, "prev": 1, "prevPos": "EMC LAB*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "160M", "total": 2, "prev": 3, "prevPos": "LAB3*1、LAB2*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "170M", "total": 2, "prev": 2, "prevPos": "LAB3*2"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "180M", "total": 2, "prev": 2, "prevPos": "LAB3*2"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "190M", "total": 2, "prev": 2, "prevPos": "LAB2*1、LAB3*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "200M", "total": 2, "prev": 2, "prevPos": "LAB3*1、LAB2*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "210M", "total": 2, "prev": 1, "prevPos": "LAB3*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "220M", "total": 3, "prev": 2, "prevPos": "LAB3*2、LAB2*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "230M", "total": 1, "prev": 1, "prevPos": "LAB3*1"}, {"category": "CAT5E", "subtype": "FUTP", "spec": "CAT5E / FUTP", "meter": "240M", "total": 1, "prev": 1, "prevPos": "LAB3*1"}, {"category": "CAT5E", "subtype": "SFTP", "spec": "CAT5E / SFTP", "meter": "25M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT5E", "subtype": "SFTP", "spec": "CAT5E / SFTP", "meter": "84M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT5E", "subtype": "SFTP", "spec": "CAT5E / SFTP", "meter": "100M", "total": 2, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "10M", "total": 3, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "20M", "total": 3, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "30M", "total": 3, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "40M", "total": 3, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "50M", "total": 6, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "55M", "total": 5, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "60M", "total": 4, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "70M", "total": 3, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "80M", "total": 5, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "90M", "total": 5, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "100M", "total": 10, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "110M", "total": 10, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "SFTP", "spec": "CAT6A / SFTP", "meter": "120M", "total": 7, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "UTP", "spec": "CAT6A / UTP", "meter": "10M", "total": 3, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "UTP", "spec": "CAT6A / UTP", "meter": "20M", "total": 2, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "UTP", "spec": "CAT6A / UTP", "meter": "50M", "total": 2, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "UTP", "spec": "CAT6A / UTP", "meter": "60M", "total": 2, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "UTP", "spec": "CAT6A / UTP", "meter": "90M", "total": 3, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "UTP", "spec": "CAT6A / UTP", "meter": "100M", "total": 2, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "UTP", "spec": "CAT6A / UTP", "meter": "110M", "total": 3, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "UTP", "spec": "CAT6A / UTP", "meter": "120M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "FUTP", "spec": "CAT6A / FUTP", "meter": "100M", "total": 2, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "FUTP", "spec": "CAT6A / FUTP", "meter": "110M", "total": 2, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "FUTP", "spec": "CAT6A / FUTP", "meter": "120M", "total": 2, "prev": "", "prevPos": ""}, {"category": "CAT6A", "subtype": "FUTP", "spec": "CAT6A / FUTP", "meter": "220M", "total": 2, "prev": "", "prevPos": ""}, {"category": "CAT6", "subtype": "UTP", "spec": "CAT6 / UTP", "meter": "10M", "total": 0, "prev": "", "prevPos": ""}, {"category": "CAT6", "subtype": "UTP", "spec": "CAT6 / UTP", "meter": "40M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT6", "subtype": "UTP", "spec": "CAT6 / UTP", "meter": "80M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT6", "subtype": "UTP", "spec": "CAT6 / UTP", "meter": "100M", "total": 2, "prev": "", "prevPos": ""}, {"category": "CAT6", "subtype": "UTP", "spec": "CAT6 / UTP", "meter": "120M", "total": 2, "prev": "", "prevPos": ""}, {"category": "CAT7", "subtype": "ISIP", "spec": "CAT7 / ISIP", "meter": "10M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT7", "subtype": "ISIP", "spec": "CAT7 / ISIP", "meter": "20M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT7", "subtype": "ISIP", "spec": "CAT7 / ISIP", "meter": "30M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT7", "subtype": "ISIP", "spec": "CAT7 / ISIP", "meter": "40M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT7", "subtype": "ISIP", "spec": "CAT7 / ISIP", "meter": "50M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT7", "subtype": "ISIP", "spec": "CAT7 / ISIP", "meter": "60M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT7", "subtype": "ISIP", "spec": "CAT7 / ISIP", "meter": "70M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT7", "subtype": "ISIP", "spec": "CAT7 / ISIP", "meter": "80M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT7", "subtype": "ISIP", "spec": "CAT7 / ISIP", "meter": "90M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT7", "subtype": "ISIP", "spec": "CAT7 / ISIP", "meter": "120M", "total": 1, "prev": "", "prevPos": ""}, {"category": "CAT8", "subtype": "", "spec": "CAT8", "meter": "20M", "total": 1, "prev": 0, "prevPos": "彥貴*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "50M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "100M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "200M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "300M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "400M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "500M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "550M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "600M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "700M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "800M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "900M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "950M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "1000M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "1050M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-5", "subtype": "", "spec": "75-5", "meter": "1100M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-3", "subtype": "", "spec": "75-3", "meter": "50M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-3", "subtype": "", "spec": "75-3", "meter": "100M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-3", "subtype": "", "spec": "75-3", "meter": "200M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-3", "subtype": "", "spec": "75-3", "meter": "400M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-3", "subtype": "", "spec": "75-3", "meter": "450M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "75-3", "subtype": "", "spec": "75-3", "meter": "500M", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "AWG18", "subtype": "", "spec": "AWG18", "meter": "2M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"category": "AWG18", "subtype": "", "spec": "AWG18", "meter": "100M", "total": 12, "prev": 12, "prevPos": "5F-LAB3*12"}, {"category": "AWG18", "subtype": "", "spec": "AWG18", "meter": "1000M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"category": "AWG26", "subtype": "", "spec": "AWG26", "meter": "2M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"category": "AWG26", "subtype": "", "spec": "AWG26", "meter": "40M", "total": 12, "prev": 12, "prevPos": "5F-LAB3*12"}, {"category": "Belden 3076F", "subtype": "", "spec": "Belden 3076F", "meter": "2M", "total": 2, "prev": 2, "prevPos": "5F-LAB3*2"}, {"category": "Belden 3076F", "subtype": "", "spec": "Belden 3076F", "meter": "50M", "total": 12, "prev": 12, "prevPos": "5F-LAB3*12"}, {"category": "韓國線", "subtype": "", "spec": "韓國線", "meter": "80M(2P)", "total": 1, "prev": 1, "prevPos": "相容性"}, {"category": "韓國線", "subtype": "", "spec": "韓國線", "meter": "80M(4P)", "total": 1, "prev": 1, "prevPos": "相容性"}, {"category": "韓國線", "subtype": "", "spec": "韓國線", "meter": "90M(2P)", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "韓國線", "subtype": "", "spec": "韓國線", "meter": "90M(4P)", "total": 1, "prev": 1, "prevPos": "5F-LAB3*1"}, {"category": "韓國線", "subtype": "", "spec": "韓國線", "meter": "箱裝", "total": 1, "prev": 1, "prevPos": "演算法LAB2*1"}, {"category": "線車", "subtype": "", "spec": "線車", "meter": "CAT5E/UTP\n10M~160M", "total": 2, "prev": "", "prevPos": ""}, {"category": "線車", "subtype": "", "spec": "線車", "meter": "CAT6A/SFTP\n10M~120M", "total": 1, "prev": "", "prevPos": ""}, {"category": "光纖", "subtype": "", "spec": "光纖", "meter": "8050M", "total": 2, "prev": 2, "prevPos": "怡伸座位*1"}]};
 const KEY="cableCounter_v1";
-let state = loadState();
-if(!state.sessions) state.sessions={};
-if(Array.isArray(state.entries) && state.entries.length){
-  const d=new Date().toISOString().slice(0,10);
-  state.sessions[d]=state.entries;
-  delete state.entries;
-  save();
-}
-let sel={loc:"",person:"",cat:"",spec:"",meter:"",qty:""};
+let state=loadState();
+let sel={loc:"",person:"",main:"",sub:"",spec:"",meter:"",qty:""};
 let activeDate=new Date().toISOString().slice(0,10);
 
 function clone(x){return JSON.parse(JSON.stringify(x))}
 function loadState(){
-  try{
-    const v=JSON.parse(localStorage.getItem(KEY));
-    if(v && v.master) return v;
-  }catch(e){}
-  return {locations:clone(SEED.locations),people:clone(SEED.people),master:clone(SEED.master),sessions:{},history:[]};
+  let old=null;try{old=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+  if(old){
+    // v4 起，線材主檔永遠以最新 index.html 的 cable一覽 為準；
+    // 但保留手機已有的人員、歷史、清點明細。
+    return {
+      version:4,
+      locations:old.locations||clone(SEED.locations),
+      people:old.people||clone(SEED.people),
+      master:clone(SEED.master),
+      sessions:old.sessions||{},
+      history:old.history||[]
+    };
+  }
+  return {version:4,locations:clone(SEED.locations),people:clone(SEED.people),master:clone(SEED.master),sessions:{},history:[]};
 }
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function sessionEntries(){
-  if(!state.sessions[activeDate]) state.sessions[activeDate]=[];
-  return state.sessions[activeDate];
-}
-function setActiveDate(v){
-  activeDate=v||new Date().toISOString().slice(0,10);
-  const el=document.getElementById("workDate"); if(el) el.value=activeDate;
-  renderEntries(); updateSummary();
-}
+function entries(){if(!state.sessions[activeDate])state.sessions[activeDate]=[];return state.sessions[activeDate]}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function categoryOf(spec){
-  const u=String(spec).toUpperCase().replace(/\s/g,"");
-  if(u.includes("CAT5E"))return"5E";
-  if(u.includes("CAT5A"))return"5A";
-  if(u.includes("CAT6A"))return"6A";
-  if(u.includes("CAT6"))return"6";
-  if(u.includes("CAT7"))return"7";
-  return"其他";
-}
-function detailOf(spec,cat){
-  if(cat==="其他")return spec;
-  const i=String(spec).indexOf("/");
-  return i>=0?String(spec).slice(i+1).trim():spec;
-}
-function showTab(name,btn){
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-  document.getElementById("tab-"+name).classList.add("active");
-  document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));
-  btn.classList.add("active");
-  if(name==="current")renderEntries();
-  if(name==="history")renderHistory();
-  if(name==="settings")renderSettings();
-}
-function button(txt,active,onclick){return `<button class="${active?"active":""}" onclick="${onclick}">${esc(txt)}</button>`}
-function renderInput(){
-  const dateEl=document.getElementById("workDate");
-  if(dateEl){dateEl.value=activeDate;dateEl.onchange=()=>setActiveDate(dateEl.value)}
-  document.getElementById("locBtns").innerHTML=state.locations.map((x,i)=>button(x,sel.loc===x,`pickLoc(${i})`)).join("");
+function labelMain(cat){return cat==="CAT5E"?"5E":cat==="CAT6A"?"6A":cat==="CAT6"?"6":cat==="CAT7"?"7":cat}
+function isPrimary(cat){return ["CAT5E","CAT6A","CAT6","CAT7"].includes(cat)}
+function currentMaster(){return state.master.filter(m=>m.category===sel.main && (!sel.sub || m.subtype===sel.sub))}
+function showTab(n,b){document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById("tab-"+n).classList.add("active");document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");if(n==="current")renderEntries();if(n==="history")renderHistory();if(n==="settings")renderSettings()}
+function btn(t,a,fn){return `<button class="${a?"active":""}" onclick="${fn}">${esc(t)}</button>`}
+
+function render(){
+  const de=document.getElementById("workDate");de.value=activeDate;de.onchange=()=>{activeDate=de.value;renderEntries();updateSummary()};
+  document.getElementById("locBtns").innerHTML=state.locations.map((x,i)=>btn(x,sel.loc===x,`pickLoc(${i})`)).join("");
   renderPersonState();
-  const cats=["5E","5A","6","6A","7","其他"];
-  document.getElementById("catBtns").innerHTML=cats.map((x,i)=>button(x,sel.cat===x,`pickCat('${x}')`)).join("");
-  renderDetails();renderMeters();renderQty();updateSummary()
+
+  const primary=["CAT5E","CAT6A","CAT6","CAT7"];
+  document.getElementById("catBtns").innerHTML=
+    primary.map(c=>btn(labelMain(c),sel.main===c,`pickMain(${JSON.stringify(c)})`)).join("")+
+    btn("其他",sel.main==="其他",`pickMain("其他")`);
+
+  renderSubs();renderMeters();renderQty();updateSummary();
 }
-function pickLoc(i){sel.loc=state.locations[i];renderInput()}
-function chooseNoPerson(){
-  sel.person="__NONE__";
-  renderPersonState();
-  updateSummary();
-}
-function clearPerson(){
-  sel.person="";
-  renderPersonState();
-  updateSummary();
-}
-function openPeopleModal(){
-  const activePeople=state.people.filter(p=>p.status!=="停用");
-  document.getElementById("peopleBtns").innerHTML=activePeople.map((p,i)=>
-    `<button class="${sel.person===p.name?"active":""}" onclick="pickPerson(${JSON.stringify(p.name)})">${esc(p.name)}</button>`
-  ).join("");
-  document.getElementById("peopleModal").classList.remove("hidden");
-}
+function pickLoc(i){sel.loc=state.locations[i];render()}
+function chooseNoPerson(){sel.person="__NONE__";renderPersonState();updateSummary()}
+function renderPersonState(){let n=document.getElementById("personNow");let no=document.getElementById("btnNoPerson"),p=document.getElementById("btnPickPerson");no.classList.toggle("active",sel.person==="__NONE__");p.classList.toggle("active",!!sel.person&&sel.person!=="__NONE__");n.textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇")}
+function openPeopleModal(){document.getElementById("peopleBtns").innerHTML=state.people.filter(p=>p.status!=="停用").map(p=>btn(p.name,sel.person===p.name,`pickPerson(${JSON.stringify(p.name)})`)).join("");document.getElementById("peopleModal").classList.remove("hidden")}
 function closePeopleModal(){document.getElementById("peopleModal").classList.add("hidden")}
-function pickPerson(name){
-  sel.person=name;
-  closePeopleModal();
-  renderPersonState();
-  updateSummary();
-}
-function renderPersonState(){
-  const noBtn=document.getElementById("btnNoPerson");
-  const pickBtn=document.getElementById("btnPickPerson");
-  const now=document.getElementById("personNow");
-  if(!noBtn||!pickBtn||!now)return;
-  noBtn.classList.toggle("active",sel.person==="__NONE__");
-  pickBtn.classList.toggle("active",sel.person!==""&&sel.person!=="__NONE__");
-  if(sel.person==="__NONE__") now.textContent="未指定";
-  else if(sel.person) now.textContent=sel.person;
-  else now.textContent="尚未選擇";
-}
-function pickCat(c){sel.cat=c;sel.spec="";sel.meter="";sel.qty="";renderInput()}
-function renderDetails(){
-  const card=document.getElementById("detailCard"),box=document.getElementById("detailBtns");
-  if(!sel.cat){card.classList.add("hidden");return}
-  let specs=[...new Set(state.master.filter(x=>categoryOf(x.spec)===sel.cat).map(x=>x.spec))];
-  if(!specs.length){card.classList.add("hidden");return}
+function pickPerson(n){sel.person=n;closePeopleModal();renderPersonState();updateSummary()}
+
+function pickMain(c){sel.main=c;sel.sub="";sel.spec="";sel.meter="";sel.qty="";render()}
+function renderSubs(){
+  const card=document.getElementById("subCard"),box=document.getElementById("subBtns");
+  if(!sel.main){card.classList.add("hidden");return}
   card.classList.remove("hidden");
-  box.innerHTML=specs.map((s,i)=>button(detailOf(s,sel.cat),sel.spec===s,`pickSpec(${JSON.stringify(s)})`)).join("");
+  if(sel.main==="其他"){
+    document.getElementById("subTitle").textContent="4. 選其他線材";
+    const others=[...new Set(state.master.filter(m=>!isPrimary(m.category)).map(m=>m.category))];
+    box.innerHTML=others.map(c=>btn(c,sel.sub===c,`pickOther(${JSON.stringify(c)})`)).join("");
+  }else{
+    document.getElementById("subTitle").textContent=`4. 選 ${labelMain(sel.main)} 後段規格`;
+    const subs=[...new Set(state.master.filter(m=>m.category===sel.main).map(m=>m.subtype).filter(Boolean))];
+    box.innerHTML=subs.map(s=>btn(s,sel.sub===s,`pickSub(${JSON.stringify(s)})`)).join("");
+    if(subs.length===1 && !sel.sub){sel.sub=subs[0];sel.spec=`${sel.main} / ${sel.sub}`;setTimeout(()=>render(),0)}
+  }
 }
-function pickSpec(s){sel.spec=s;sel.meter="";sel.qty="";renderInput()}
+function pickSub(s){sel.sub=s;sel.spec=`${sel.main} / ${s}`;sel.meter="";sel.qty="";render()}
+function pickOther(c){sel.sub=c;sel.spec=c;sel.meter="";sel.qty="";render()}
+
 function renderMeters(){
   const card=document.getElementById("meterCard"),box=document.getElementById("meterBtns");
   if(!sel.spec){card.classList.add("hidden");return}
-  let ms=[...new Set(state.master.filter(x=>x.spec===sel.spec).map(x=>x.meter))];
-  ms.sort((a,b)=>(parseFloat(a)||99999)-(parseFloat(b)||99999));
+  let ms=[...new Set(state.master.filter(m=>m.spec===sel.spec).map(m=>m.meter))];
   card.classList.remove("hidden");
-  box.innerHTML=ms.map(m=>button(m,sel.meter===m,`pickMeter(${JSON.stringify(m)})`)).join("");
+  box.innerHTML=ms.map(m=>btn(m,sel.meter===m,`pickMeter(${JSON.stringify(m)})`)).join("");
 }
-function pickMeter(m){sel.meter=m;sel.qty="";renderInput()}
+function pickMeter(m){sel.meter=m;sel.qty="";render()}
 function renderQty(){
   const card=document.getElementById("qtyCard"),box=document.getElementById("qtyBtns");
   if(!sel.meter){card.classList.add("hidden");return}
   card.classList.remove("hidden");
-  box.innerHTML=[1,2,3,4,5,6,7,8,9,10].map(q=>button(q,Number(sel.qty)===q,`pickQty(${q})`)).join("");
-  document.getElementById("customQty").value=sel.qty&&!Number.isInteger(Number(sel.qty))?sel.qty:"";
+  box.innerHTML=[1,2,3,4,5].map(q=>btn(q,Number(sel.qty)===q,`pickQty(${q})`)).join("");
+
 }
-function pickQty(q){sel.qty=q;document.getElementById("customQty").value="";updateSummary();renderQty()}
-document.getElementById("customQty").addEventListener("input",e=>{if(Number(e.target.value)>0)sel.qty=Number(e.target.value);updateSummary()});
+function pickQty(q){sel.qty=q;renderQty();updateSummary()}
+
+
 function updateSummary(){
   document.getElementById("sLoc").textContent=sel.loc||"尚未選擇";
   document.getElementById("sPerson").textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇");
-  document.getElementById("sCable").textContent=sel.spec?`${sel.spec}`:"尚未選擇";
-  document.getElementById("sMQ").textContent=sel.meter?`${sel.meter} / ${sel.qty||"?"}`:"—";
+  document.getElementById("sCable").textContent=sel.spec||"尚未選擇";
+  document.getElementById("sMeter").textContent=sel.meter||"尚未選擇";
+  document.getElementById("sQty").textContent=sel.qty||"尚未選擇";
 }
 function addEntry(){
-  const custom=Number(document.getElementById("customQty").value);
-  if(custom>0)sel.qty=custom;
   const msg=document.getElementById("addMsg");
   if(!sel.loc)return msg.textContent="請先選地點。";
-  if(!sel.person)return msg.textContent="請先按「未指定」或選擇人員。";
-  if(!sel.spec)return msg.textContent="請先選線材規格。";
+  if(!sel.person)return msg.textContent="請按「未指定」或選擇人員。";
+  if(!sel.spec)return msg.textContent="請先選線材。";
   if(!sel.meter)return msg.textContent="請先選米數。";
   if(!(Number(sel.qty)>0))return msg.textContent="請先選數量。";
-  const storedPerson=sel.person==="__NONE__"?"":sel.person;
-  const key=[sel.loc,storedPerson,sel.spec,sel.meter].join("|");
-  const entries=sessionEntries();
-  const old=entries.find(x=>x.key===key);
-  if(old){old.qty+=Number(sel.qty);old.time=new Date().toISOString()}
-  else entries.push({key,loc:sel.loc,person:storedPerson,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),time:new Date().toISOString()});
-  save();msg.textContent=`已加入：${sel.spec} ${sel.meter} × ${sel.qty}（${sel.person==="__NONE__"?sel.loc:sel.person}）`;
-  sel.meter="";sel.qty="";document.getElementById("customQty").value="";renderInput()
+  const person=sel.person==="__NONE__"?"":sel.person;
+  const key=[sel.loc,person,sel.spec,sel.meter].join("|");
+  const e=entries(),old=e.find(x=>x.key===key);
+  if(old)old.qty+=Number(sel.qty);else e.push({key,loc:sel.loc,person,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),time:new Date().toISOString()});
+  save();msg.textContent=`已加入：${sel.spec} / ${sel.meter} / ${sel.qty}條`;
+  sel.meter="";sel.qty="";render();
 }
 function renderEntries(){
-  const box=document.getElementById("entryList"),empty=document.getElementById("emptyEntry");
-  const entries=sessionEntries();
-  document.getElementById("entryCount").textContent=`(${activeDate} / ${entries.length} 筆)`;
-  empty.classList.toggle("hidden",entries.length>0);
-  box.innerHTML=entries.map((x,i)=>`<div class="list-item"><div><div class="item-title">${esc(x.spec)}　${esc(x.meter)}　× ${x.qty}</div><div class="item-meta">${esc(x.loc)} / ${esc(x.person||"未指定")}</div></div><div class="item-actions"><button onclick="adjust(${i},-1)">−</button><button onclick="adjust(${i},1)">＋</button><button class="danger" onclick="delEntry(${i})">刪</button></div></div>`).join("")
+  const e=entries();document.getElementById("entryCount").textContent=`(${activeDate} / ${e.length} 筆)`;document.getElementById("emptyEntry").classList.toggle("hidden",e.length>0);
+  document.getElementById("entryList").innerHTML=e.map((x,i)=>`<div class="list-item"><div><div class="item-title">${esc(x.spec)}　${esc(x.meter)}　× ${x.qty}</div><div class="item-meta">${esc(x.loc)} / ${esc(x.person||"未指定")}</div></div><div class="item-actions"><button onclick="adj(${i},-1)">−</button><button onclick="adj(${i},1)">＋</button><button class="danger" onclick="delE(${i})">刪</button></div></div>`).join("")
 }
-function adjust(i,d){const e=sessionEntries();e[i].qty+=d;if(e[i].qty<=0)e.splice(i,1);save();renderEntries()}
-function delEntry(i){if(confirm("刪除這筆清點？")){sessionEntries().splice(i,1);save();renderEntries()}}
+function adj(i,d){const e=entries();e[i].qty+=d;if(e[i].qty<=0)e.splice(i,1);save();renderEntries()}
+function delE(i){if(confirm("刪除這筆？")){entries().splice(i,1);save();renderEntries()}}
 function aggregate(){
-  const map={};
-  sessionEntries().forEach(e=>{
-    const k=e.spec+"|"+e.meter;
-    if(!map[k])map[k]={qty:0,pos:{}};
-    map[k].qty+=e.qty;
-    const p=e.person||e.loc;
-    map[k].pos[p]=(map[k].pos[p]||0)+e.qty;
-  });
-  return map;
+  const map={};entries().forEach(e=>{const k=e.spec+"|"+e.meter;if(!map[k])map[k]={qty:0,pos:{}};map[k].qty+=e.qty;const p=e.person||e.loc;map[k].pos[p]=(map[k].pos[p]||0)+e.qty});return map
 }
-function positionText(obj){return Object.entries(obj||{}).map(([k,v])=>`${k}*${v}`).join("、")}
+function posText(p){return Object.entries(p||{}).map(([k,v])=>`${k}*${v}`).join("、")}
+
 function finishSession(){
-  const entries=sessionEntries();
-  if(!entries.length)return alert("目前這個日期沒有本次清點資料。");
-  if(!confirm(`確認完成 ${activeDate} 的清點？同一天再次清點會合併到同一天的歷史紀錄。`))return;
+  if(!entries().length)return alert("這個日期還沒有清點資料。");
   const ag=aggregate();
   Object.entries(ag).forEach(([k,v])=>{
-    const [spec,meter]=k.split("|");
-    const m=state.master.find(x=>x.spec===spec&&x.meter===meter);
-    if(!m)return;
-    const prev=m.prev;
-    const histKey=activeDate+"|"+spec+"|"+meter;
-    let h=state.history.find(x=>x.histKey===histKey);
-    if(!h){
-      h={histKey,date:activeDate,spec,meter,total:m.total,prev,current:v.qty,diff:(prev===""?null:v.qty-Number(prev)),positions:positionText(v.pos)};
-      state.history.push(h);
-    }else{
-      h.current=v.qty;
-      h.diff=(h.prev===""?null:v.qty-Number(h.prev));
-      h.positions=positionText(v.pos);
-      h.total=m.total;
-    }
-    m.prev=v.qty;m.prevPos=positionText(v.pos);
+    const [spec,meter]=k.split("|");const m=state.master.find(x=>x.spec===spec&&x.meter===meter);if(!m)return;
+    const hk=activeDate+"|"+spec+"|"+meter;let h=state.history.find(x=>x.histKey===hk);
+    if(!h){h={histKey:hk,date:activeDate,spec,meter,total:m.total,prev:m.prev,current:v.qty,diff:m.prev===""?"":v.qty-Number(m.prev),positions:posText(v.pos)};state.history.push(h)}
+    else{h.current=v.qty;h.diff=h.prev===""?"":v.qty-Number(h.prev);h.positions=posText(v.pos)}
   });
-  save();renderEntries();renderHistory();
-  alert(`${activeDate} 的清點已存入歷史。之後同一天再進來新增，會繼續併在同一天。`);
+  save();renderHistory();alert("已存入歷史。你現在可以匯出 Excel 報表。");
 }
 function renderHistory(){
-  const box=document.getElementById("historyBox");
-  if(!state.history.length){box.innerHTML='<div class="muted">尚無歷史紀錄。</div>';return}
-  const rows=[...state.history].reverse();
-  box.innerHTML=`<table><thead><tr><th>日期</th><th>規格</th><th>米數</th><th>前次</th><th>本次</th><th>差異</th><th>位置</th></tr></thead><tbody>`+
-    rows.map(x=>`<tr><td>${String(x.date).includes("T")?new Date(x.date).toLocaleDateString("zh-TW"):x.date}</td><td>${esc(x.spec)}</td><td>${esc(x.meter)}</td><td>${x.prev??""}</td><td>${x.current}</td><td class="${x.diff<0?"status-down":x.diff>0?"status-up":""}">${x.diff==null?"":(x.diff>0?"+":"")+x.diff}</td><td>${esc(x.positions)}</td></tr>`).join("")+
-    `</tbody></table>`
+  const box=document.getElementById("historyBox");if(!state.history.length){box.innerHTML='<div class="muted">尚無歷史紀錄。</div>';return}
+  box.innerHTML='<table><tr><th>日期</th><th>規格</th><th>米數</th><th>前次</th><th>本次</th><th>差異</th><th>位置</th></tr>'+[...state.history].reverse().map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.spec)}</td><td>${esc(x.meter)}</td><td>${x.prev}</td><td>${x.current}</td><td>${x.diff}</td><td>${esc(x.positions)}</td></tr>`).join("")+'</table>'
 }
-function clearHistory(){if(confirm("確定清除手機內的所有歷史紀錄？建議先匯出備份。")){state.history=[];save();renderHistory()}}
 function renderSettings(){
-  document.getElementById("peopleList").innerHTML=state.people.map((p,i)=>`<div class="list-item"><div><b>${esc(p.name)}</b><div class="item-meta">${esc(p.status)}</div></div><div class="item-actions"><button onclick="togglePerson(${i})">${p.status==="停用"?"啟用":"停用"}</button></div></div>`).join("");
-  document.getElementById("locationList").innerHTML=state.locations.map((x,i)=>`<div class="list-item"><div><b>${esc(x)}</b></div><div class="item-actions"><button class="danger" onclick="delLocation(${i})">刪</button></div></div>`).join("")
+  document.getElementById("peopleList").innerHTML=state.people.map((p,i)=>`<div class="list-item"><div><b>${esc(p.name)}</b><div class="item-meta">${esc(p.status)}</div></div><button onclick="toggleP(${i})">${p.status==="停用"?"啟用":"停用"}</button></div>`).join("")
 }
-function addPerson(){const el=document.getElementById("newPerson"),v=el.value.trim();if(!v)return;if(state.people.some(x=>x.name===v))return alert("人員已存在");state.people.push({name:v,status:"使用中"});el.value="";save();renderSettings();renderInput()}
-function togglePerson(i){state.people[i].status=state.people[i].status==="停用"?"使用中":"停用";save();renderSettings();renderInput()}
-function addLocation(){const el=document.getElementById("newLoc"),v=el.value.trim();if(!v)return;if(state.locations.includes(v))return alert("地點已存在");state.locations.push(v);el.value="";save();renderSettings();renderInput()}
-function delLocation(i){if(confirm("刪除地點 "+state.locations[i]+"？")){state.locations.splice(i,1);save();renderSettings();renderInput()}}
-function addCable(){
- const spec=document.getElementById("newSpec").value.trim(), meter=document.getElementById("newMeter").value.trim(), total=Number(document.getElementById("newTotal").value);
- if(!spec||!meter)return alert("請輸入規格與米數");
- if(state.master.some(x=>x.spec===spec&&x.meter===meter))return alert("這個規格 + 米數已存在");
- state.master.push({spec,meter,total:Number.isFinite(total)?total:"",prev:"",prevPos:""});
- ["newSpec","newMeter","newTotal"].forEach(id=>document.getElementById(id).value="");
- save();renderInput();alert("已新增線材");
-}
-function download(name,text,type="text/plain;charset=utf-8"){
- const blob=new Blob([text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)
-}
+function addPerson(){const el=document.getElementById("newPerson"),v=el.value.trim();if(!v)return;state.people.push({name:v,status:"使用中"});el.value="";save();renderSettings()}
+function toggleP(i){state.people[i].status=state.people[i].status==="停用"?"使用中":"停用";save();renderSettings();render()}
+
 function csvCell(v){v=String(v??"");return /[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v}
-function exportCurrentCsv(){
- const rows=[["清點日期","地點","人員","線材規格","米數","數量","輸入時間"],...sessionEntries().map(x=>[activeDate,x.loc,x.person,x.spec,x.meter,x.qty,x.time])];
- download(`本次線材清點_${activeDate}.csv`,"\ufeff"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n"),"text/csv;charset=utf-8")
+function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportCurrentCsv(){const r=[["清點日期","地點","人員","線材規格","米數","數量"],...entries().map(x=>[activeDate,x.loc,x.person||"未指定",x.spec,x.meter,x.qty])];download(`本次清點明細_${activeDate}.csv`,"\ufeff"+r.map(x=>x.map(csvCell).join(",")).join("\r\n"),"text/csv;charset=utf-8")}
+
+function xmlEsc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function exportReport(){
+  const ag=aggregate(), grouped=[];
+  let maxPos=1;
+  state.master.forEach(m=>{
+    const a=ag[m.spec+"|"+m.meter];
+    const hist=state.history.find(h=>h.date===activeDate&&h.spec===m.spec&&h.meter===m.meter);
+    let current="",diff="",positions=[];
+    if(a){current=a.qty;diff=m.prev===""?"":a.qty-Number(m.prev);positions=Object.entries(a.pos).map(([k,v])=>`${k}*${v}`)}
+    else if(hist){current=hist.current;diff=hist.diff;positions=String(hist.positions||"").split("、").filter(Boolean)}
+    maxPos=Math.max(maxPos,positions.length);
+    grouped.push({...m,current,diff,positions});
+  });
+  let rows=[];
+  let lastSpec="";
+  grouped.forEach(r=>{
+    const specCell=r.spec===lastSpec?"":r.spec;lastSpec=r.spec;
+    rows.push([specCell,r.meter,r.total,r.current,r.diff,...r.positions,...Array(maxPos-r.positions.length).fill("")]);
+  });
+
+  const headers=["網路線規格","米數","總數量",`${activeDate.replaceAll("-","/")}清點數量`,"差異","位置",...Array(Math.max(0,maxPos-1)).fill("")];
+  let xml=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>
+  <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+  <Styles>
+    <Style ss:ID="Default"><Alignment ss:Vertical="Center"/><Font ss:FontName="Calibri" ss:Size="11"/></Style>
+    <Style ss:ID="Header"><Font ss:Bold="1"/><Interior ss:Color="#D9EAF7" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center"/></Style>
+    <Style ss:ID="Spec"><Font ss:Bold="1"/><Interior ss:Color="#FFF2CC" ss:Pattern="Solid"/></Style>
+  </Styles>
+  <Worksheet ss:Name="清點結果"><Table>`;
+  xml+="<Row>"+headers.map(h=>`<Cell ss:StyleID="Header"><Data ss:Type="String">${xmlEsc(h)}</Data></Cell>`).join("")+"</Row>";
+  rows.forEach(r=>{
+    xml+="<Row>"+r.map((v,i)=>{
+      const num=typeof v==="number"&&Number.isFinite(v);
+      const st=i===0&&v!==""?' ss:StyleID="Spec"':"";
+      return `<Cell${st}><Data ss:Type="${num?"Number":"String"}">${xmlEsc(v)}</Data></Cell>`
+    }).join("")+"</Row>";
+  });
+  xml+=`</Table></Worksheet></Workbook>`;
+  download(`線材清點_${activeDate}.xml`,"\ufeff"+xml,"application/vnd.ms-excel;charset=utf-8");
 }
-function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
-function xmlEsc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
-function xmlSheet(name,rows){
- let x=`<Worksheet ss:Name="${xmlEsc(name)}"><Table>`;
- rows.forEach(r=>{x+="<Row>";r.forEach(v=>{const num=typeof v==="number"&&Number.isFinite(v);x+=`<Cell><Data ss:Type="${num?"Number":"String"}">${xmlEsc(v??"")}</Data></Cell>`});x+="</Row>"});
- return x+"</Table></Worksheet>"
-}
-function exportExcelXml(includeHistory){
- const ag=aggregate();
- const summary=[["網路線規格","米數","購入總數量","前次清點數量","本次清點數量","差異","本次位置","前次位置"]];
- state.master.forEach(m=>{const a=ag[m.spec+"|"+m.meter];summary.push([m.spec,m.meter,m.total,m.prev,a?a.qty:"",a&&m.prev!==""?a.qty-Number(m.prev):"",a?positionText(a.pos):"",m.prevPos||""])});
- const detail=[["清點日期","地點","人員","線材規格","米數","數量","輸入時間"],...sessionEntries().map(x=>[activeDate,x.loc,x.person,x.spec,x.meter,x.qty,x.time])];
- const hist=[["清點日期","網路線規格","米數","購入總數量","前次數量","本次數量","差異","位置"],...state.history.map(x=>[new Date(x.date).toLocaleDateString("zh-TW"),x.spec,x.meter,x.total,x.prev,x.current,x.diff??"",x.positions])];
- const setting=[["人員姓名","狀態"],...state.people.map(p=>[p.name,p.status]),[],["地點"],...state.locations.map(x=>[x])];
- let xml=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>`+
- `<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">`+
- xmlSheet("線材總表",summary)+xmlSheet("本次清點明細",detail)+(includeHistory?xmlSheet("歷史紀錄",hist):"")+xmlSheet("設定",setting)+`</Workbook>`;
- download(`線材清點報表_${activeDate}.xml`,"\ufeff"+xml,"application/vnd.ms-excel;charset=utf-8")
-}
-function backupJson(){download(`線材清點備份_${today()}.json`,JSON.stringify(state,null,2),"application/json;charset=utf-8")}
-function restoreJson(ev){
- const f=ev.target.files[0];if(!f)return;const rd=new FileReader();
- rd.onload=()=>{try{const obj=JSON.parse(rd.result);if(!obj.master||!obj.people)throw 0;if(confirm("匯入會覆蓋目前手機內資料，確定？")){state=obj;save();sel={loc:"",person:"",cat:"",spec:"",meter:"",qty:""};renderAll();alert("還原完成")}}catch(e){alert("備份檔格式不正確")}};
- rd.readAsText(f);ev.target.value=""
-}
-function renderAll(){renderInput();renderEntries();renderHistory();renderSettings()}
-setActiveDate(activeDate);
-renderAll();
+function backupJson(){download(`線材清點備份_${activeDate}.json`,JSON.stringify(state,null,2),"application/json;charset=utf-8")}
+function restoreJson(ev){const f=ev.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const o=JSON.parse(rd.result);if(confirm("匯入會覆蓋目前資料，確定？")){state=o;save();render();renderEntries();renderHistory();renderSettings()}}catch(e){alert("備份格式不正確")}};rd.readAsText(f)}
+render();renderEntries();renderHistory();renderSettings();
 </script>
 </body></html>
