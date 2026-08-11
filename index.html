@@ -76,6 +76,14 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 <section id="tab-current" class="tab">
   <div class="card"><div class="step">本次已清點 <span id="entryCount"></span></div><div id="entryList"></div><div id="emptyEntry" class="muted">尚未加入資料。</div></div>
   <div class="card">
+    <div class="step">清點日期修正</div>
+    <div class="muted" style="margin-bottom:8px">如果誤選日期，可把目前日期的全部明細移到正確日期；目標日期已有資料時會自動合併。</div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+      <input id="moveDate" type="date">
+      <button class="secondary" onclick="moveCurrentDate()">整批移到此日期</button>
+    </div>
+  </div>
+  <div class="card">
     <div class="toolbar"><button class="secondary" onclick="exportReport()">匯出 Excel 報表</button><button class="secondary" onclick="exportCurrentCsv()">匯出 CSV 明細</button></div>
     <div class="note" style="margin-top:10px">Excel 報表版型會比照你提供的「清點匯出excel結果」：規格、米數、總數量、清點數量、差異，以及位置分欄。</div>
     <button class="primary" style="margin-top:10px" onclick="finishSession()">確認完成本次清點</button>
@@ -218,6 +226,48 @@ function renderEntries(){
 }
 function adj(i,d){const e=entries();e[i].qty+=d;if(e[i].qty<=0)e.splice(i,1);save();renderEntries()}
 function delE(i){if(confirm("刪除這筆？")){entries().splice(i,1);save();renderEntries()}}
+function moveCurrentDate(){
+  const target=document.getElementById("moveDate").value;
+  if(!target)return alert("請先選擇要移到哪一天。");
+  if(target===activeDate)return alert("目標日期和目前日期相同。");
+
+  const srcEntries=state.sessions[activeDate]||[];
+  if(!srcEntries.length)return alert("目前這個日期沒有清點資料可以移動。");
+
+  if(!confirm(`確定把 ${activeDate} 的 ${srcEntries.length} 筆清點明細全部移到 ${target}？\n如果目標日期已有資料，會自動合併。`))return;
+
+  if(!state.sessions[target])state.sessions[target]=[];
+  const dest=state.sessions[target];
+
+  srcEntries.forEach(x=>{
+    const old=dest.find(d=>d.key===x.key);
+    if(old){
+      old.qty+=Number(x.qty);
+      old.time=new Date().toISOString();
+    }else{
+      dest.push({...x});
+    }
+  });
+
+  delete state.sessions[activeDate];
+
+  // 若誤選日期的資料已經按過「完成本次清點」，歷史日期也一起修正。
+  (state.history||[]).forEach(h=>{
+    if(h.date===activeDate){
+      h.date=target;
+      h.histKey=target+"|"+h.spec+"|"+h.meter;
+    }
+  });
+
+  save();
+  activeDate=target;
+  document.getElementById("workDate").value=target;
+  document.getElementById("moveDate").value="";
+  renderEntries();
+  renderHistory();
+  updateSummary();
+  alert(`完成：已把清點資料移到 ${target}。`);
+}
 function aggregate(){
   const map={};entries().forEach(e=>{const k=e.spec+"|"+e.meter;if(!map[k])map[k]={qty:0,pos:{}};map[k].qty+=e.qty;const p=e.person||e.loc;map[k].pos[p]=(map[k].pos[p]||0)+e.qty});return map
 }
