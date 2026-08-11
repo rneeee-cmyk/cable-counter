@@ -25,7 +25,7 @@ input,select{width:100%;font-size:16px;padding:12px;border:1px solid #b9c5d1;bor
 .modal{position:fixed;inset:0;background:#0006;display:flex;align-items:flex-end;justify-content:center;z-index:100}.modal.hidden{display:none}.modal-panel{width:100%;max-width:760px;max-height:78vh;background:#fff;border-radius:18px 18px 0 0;padding:14px;overflow:auto}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #e8edf2;padding:7px;text-align:left;vertical-align:top}th{background:#f3f6fa}
 @media(max-width:430px){.btn-grid.locations{grid-template-columns:repeat(2,1fr)}.btn-grid.meter{grid-template-columns:repeat(3,1fr)}}
-</style>
+.status-up{color:#2f6b2f;font-weight:800}.status-down{color:#b00020;font-weight:800}</style>
 </head>
 <body>
 <header><div class="title">線材現場清點</div><div class="sub">線材規格以「cable一覽」為準</div></header>
@@ -85,12 +85,21 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
   </div>
   <div class="card">
     <div class="toolbar"><button class="secondary" onclick="exportReport()">匯出 Excel 報表</button><button class="secondary" onclick="exportCurrentCsv()">匯出 CSV 明細</button></div>
-    <div class="note" style="margin-top:10px">Excel 報表版型會比照你提供的「清點匯出excel結果」：規格、米數、總數量、清點數量、差異，以及位置分欄。</div>
+    <div class="note" style="margin-top:10px">Excel 報表版型會比照你提供的「清點匯出excel結果」；差異固定計算為「清點數量 − 總數量」。</div>
     <button class="primary" style="margin-top:10px" onclick="finishSession()">確認完成本次清點</button>
   </div>
 </section>
 
-<section id="tab-history" class="tab"><div class="card"><div class="step">歷史紀錄</div><div id="historyBox"></div></div></section>
+<section id="tab-history" class="tab">
+  <div class="card">
+    <div class="step">歷史紀錄</div>
+    <div class="muted" style="margin-bottom:8px">先選清點日期；下方會依照 cable一覽 的線材順序顯示。</div>
+    <input id="historyDate" type="date">
+  </div>
+  <div class="card" style="overflow:auto">
+    <div id="historyBox"></div>
+  </div>
+</section>
 <section id="tab-settings" class="tab">
   <div class="card"><div class="step">人員設定</div><div style="display:grid;grid-template-columns:1fr auto;gap:8px"><input id="newPerson" placeholder="輸入新人姓名"><button class="secondary" onclick="addPerson()">新增</button></div><div id="peopleList"></div></div>
   <div class="card"><div class="step">備份</div><div class="toolbar"><button class="secondary" onclick="backupJson()">匯出備份</button><button class="secondary" onclick="document.getElementById('restoreFile').click()">匯入備份</button></div><input id="restoreFile" type="file" accept=".json" class="hidden" onchange="restoreJson(event)"></div>
@@ -279,14 +288,76 @@ function finishSession(){
   Object.entries(ag).forEach(([k,v])=>{
     const [spec,meter]=k.split("|");const m=state.master.find(x=>x.spec===spec&&x.meter===meter);if(!m)return;
     const hk=activeDate+"|"+spec+"|"+meter;let h=state.history.find(x=>x.histKey===hk);
-    if(!h){h={histKey:hk,date:activeDate,spec,meter,total:m.total,prev:m.prev,current:v.qty,diff:m.prev===""?"":v.qty-Number(m.prev),positions:posText(v.pos)};state.history.push(h)}
-    else{h.current=v.qty;h.diff=h.prev===""?"":v.qty-Number(h.prev);h.positions=posText(v.pos)}
+    if(!h){h={histKey:hk,date:activeDate,spec,meter,total:m.total,prev:m.prev,current:v.qty,diff:m.total===""?"":v.qty-Number(m.total),positions:posText(v.pos)};state.history.push(h)}
+    else{h.current=v.qty;h.total=m.total;h.diff=m.total===""?"":v.qty-Number(m.total);h.positions=posText(v.pos)}
   });
   save();renderHistory();alert("已存入歷史。你現在可以匯出 Excel 報表。");
 }
 function renderHistory(){
-  const box=document.getElementById("historyBox");if(!state.history.length){box.innerHTML='<div class="muted">尚無歷史紀錄。</div>';return}
-  box.innerHTML='<table><tr><th>日期</th><th>規格</th><th>米數</th><th>前次</th><th>本次</th><th>差異</th><th>位置</th></tr>'+[...state.history].reverse().map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.spec)}</td><td>${esc(x.meter)}</td><td>${x.prev}</td><td>${x.current}</td><td>${x.diff}</td><td>${esc(x.positions)}</td></tr>`).join("")+'</table>'
+  const box=document.getElementById("historyBox");
+  const dateInput=document.getElementById("historyDate");
+  if(!dateInput)return;
+
+  const dates=[...new Set((state.history||[]).map(x=>x.date))].sort().reverse();
+
+  // 第一次進歷史頁時，預設選最新一個有資料的日期。
+  if(!dateInput.value){
+    dateInput.value=dates[0]||activeDate;
+  }
+  dateInput.onchange=()=>renderHistory();
+
+  const selected=dateInput.value;
+  if(!selected){
+    box.innerHTML='<div class="muted">尚無歷史紀錄。</div>';
+    return;
+  }
+
+  const histMap={};
+  (state.history||[]).filter(x=>x.date===selected).forEach(h=>{
+    histMap[h.spec+"|"+h.meter]=h;
+  });
+
+  if(Object.keys(histMap).length===0){
+    box.innerHTML=`<div class="muted">${esc(selected)} 沒有歷史紀錄。</div>`;
+    return;
+  }
+
+  let rows="";
+  let lastSpec="";
+  state.master.forEach(m=>{
+    const h=histMap[m.spec+"|"+m.meter];
+    if(!h)return;
+
+    const specCell=(m.spec===lastSpec)?"":m.spec;
+    lastSpec=m.spec;
+
+    let diff=(m.total===""||h.current==="")?"":Number(h.current)-Number(m.total);
+    let diffText=diff===""||diff==null?"":(Number(diff)>0?"+"+diff:diff);
+    let diffClass=Number(diff)<0?"status-down":Number(diff)>0?"status-up":"";
+
+    rows+=`<tr>
+      <td>${esc(specCell)}</td>
+      <td>${esc(m.meter)}</td>
+      <td>${esc(m.total)}</td>
+      <td>${esc(h.current)}</td>
+      <td class="${diffClass}">${esc(diffText)}</td>
+      <td>${esc(h.positions||"")}</td>
+    </tr>`;
+  });
+
+  box.innerHTML=`
+    <div style="font-weight:800;font-size:16px;margin-bottom:10px">${esc(selected)} 清點結果</div>
+    <table>
+      <thead><tr>
+        <th>網路線規格</th>
+        <th>米數</th>
+        <th>總數量</th>
+        <th>清點數量</th>
+        <th>差異</th>
+        <th>位置</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 function renderSettings(){
   document.getElementById("peopleList").innerHTML=state.people.map((p,i)=>`<div class="list-item"><div><b>${esc(p.name)}</b><div class="item-meta">${esc(p.status)}</div></div><button onclick="toggleP(${i})">${p.status==="停用"?"啟用":"停用"}</button></div>`).join("")
@@ -306,8 +377,8 @@ function exportReport(){
     const a=ag[m.spec+"|"+m.meter];
     const hist=state.history.find(h=>h.date===activeDate&&h.spec===m.spec&&h.meter===m.meter);
     let current="",diff="",positions=[];
-    if(a){current=a.qty;diff=m.prev===""?"":a.qty-Number(m.prev);positions=Object.entries(a.pos).map(([k,v])=>`${k}*${v}`)}
-    else if(hist){current=hist.current;diff=hist.diff;positions=String(hist.positions||"").split("、").filter(Boolean)}
+    if(a){current=a.qty;diff=m.total===""?"":a.qty-Number(m.total);positions=Object.entries(a.pos).map(([k,v])=>`${k}*${v}`)}
+    else if(hist){current=hist.current;diff=m.total===""?"":Number(hist.current)-Number(m.total);positions=String(hist.positions||"").split("、").filter(Boolean)}
     maxPos=Math.max(maxPos,positions.length);
     grouped.push({...m,current,diff,positions});
   });
