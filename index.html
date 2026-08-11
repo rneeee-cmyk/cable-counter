@@ -85,7 +85,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
   </div>
   <div class="card">
     <div class="toolbar"><button class="secondary" onclick="exportReport()">匯出 Excel 報表</button><button class="secondary" onclick="exportCurrentCsv()">匯出 CSV 明細</button></div>
-    <div class="note" style="margin-top:10px">Excel 報表版型會比照你提供的「清點匯出excel結果」；差異固定計算為「清點數量 − 總數量」。</div>
+    <div class="note" style="margin-top:10px">歷史與 Excel 都直接讀取同一份「本次明細」，不再各存一份數字；差異固定為「清點數量 − 總數量」。</div>
     <button class="primary" style="margin-top:10px" onclick="finishSession()">確認完成本次清點</button>
   </div>
 </section>
@@ -283,65 +283,79 @@ function aggregate(){
 function posText(p){return Object.entries(p||{}).map(([k,v])=>`${k}*${v}`).join("、")}
 
 function finishSession(){
-  if(!entries().length)return alert("這個日期還沒有清點資料。");
-  const ag=aggregate();
-  Object.entries(ag).forEach(([k,v])=>{
-    const [spec,meter]=k.split("|");const m=state.master.find(x=>x.spec===spec&&x.meter===meter);if(!m)return;
-    const hk=activeDate+"|"+spec+"|"+meter;let h=state.history.find(x=>x.histKey===hk);
-    if(!h){h={histKey:hk,date:activeDate,spec,meter,total:m.total,prev:m.prev,current:v.qty,diff:m.total===""?"":v.qty-Number(m.total),positions:posText(v.pos)};state.history.push(h)}
-    else{h.current=v.qty;h.total=m.total;h.diff=m.total===""?"":v.qty-Number(m.total);h.positions=posText(v.pos)}
-  });
-  save();renderHistory();alert("已存入歷史。你現在可以匯出 Excel 報表。");
+  const e=entries();
+  if(!e.length)return alert("這個日期還沒有清點資料。");
+  if(!state.completedDates)state.completedDates={};
+  state.completedDates[activeDate]=true;
+  save();
+  renderHistory();
+  alert("已確認這個日期的清點。歷史與 Excel 會直接依這個日期的「本次明細」即時計算，因此之後若再新增或修正，同一天的結果也會同步更新。");
 }
 function renderHistory(){
   const box=document.getElementById("historyBox");
   const dateInput=document.getElementById("historyDate");
   if(!dateInput)return;
 
-  const dates=[...new Set((state.history||[]).map(x=>x.date))].sort().reverse();
+  const sessionDates=Object.keys(state.sessions||{}).filter(d=>(state.sessions[d]||[]).length>0);
+  const oldHistoryDates=(state.history||[]).map(x=>x.date);
+  const dates=[...new Set([...sessionDates,...oldHistoryDates])].sort().reverse();
 
-  // 第一次進歷史頁時，預設選最新一個有資料的日期。
   if(!dateInput.value){
     dateInput.value=dates[0]||activeDate;
   }
   dateInput.onchange=()=>renderHistory();
 
   const selected=dateInput.value;
-  if(!selected){
-    box.innerHTML='<div class="muted">尚無歷史紀錄。</div>';
-    return;
-  }
+  const dayEntries=(state.sessions&&state.sessions[selected])?state.sessions[selected]:[];
 
-  const histMap={};
-  (state.history||[]).filter(x=>x.date===selected).forEach(h=>{
-    histMap[h.spec+"|"+h.meter]=h;
+  const map={};
+  dayEntries.forEach(e=>{
+    const k=e.spec+"|"+e.meter;
+    if(!map[k])map[k]={qty:0,pos:{}};
+    map[k].qty+=Number(e.qty)||0;
+    const p=e.person||e.loc;
+    map[k].pos[p]=(map[k].pos[p]||0)+(Number(e.qty)||0);
   });
 
-  if(Object.keys(histMap).length===0){
-    box.innerHTML=`<div class="muted">${esc(selected)} 沒有歷史紀錄。</div>`;
+  // 舊版相容：若只有舊歷史快照、沒有本次明細，仍可顯示。
+  if(Object.keys(map).length===0){
+    (state.history||[]).filter(x=>x.date===selected).forEach(h=>{
+      const k=h.spec+"|"+h.meter;
+      if(!map[k])map[k]={qty:Number(h.current)||0,pos:{}};
+      const parts=String(h.positions||"").split("、").filter(Boolean);
+      parts.forEach(s=>{
+        const mm=s.match(/^(.*)\*(\d+(?:\.\d+)?)$/);
+        if(mm)map[k].pos[mm[1]]=(map[k].pos[mm[1]]||0)+Number(mm[2]);
+      });
+    });
+  }
+
+  if(Object.keys(map).length===0){
+    box.innerHTML=`<div class="muted">${esc(selected)} 沒有清點紀錄。</div>`;
     return;
   }
 
   let rows="";
   let lastSpec="";
   state.master.forEach(m=>{
-    const h=histMap[m.spec+"|"+m.meter];
-    if(!h)return;
+    const a=map[m.spec+"|"+m.meter];
+    if(!a)return;
 
     const specCell=(m.spec===lastSpec)?"":m.spec;
     lastSpec=m.spec;
 
-    let diff=(m.total===""||h.current==="")?"":Number(h.current)-Number(m.total);
-    let diffText=diff===""||diff==null?"":(Number(diff)>0?"+"+diff:diff);
-    let diffClass=Number(diff)<0?"status-down":Number(diff)>0?"status-up":"";
+    const diff=m.total===""?"":a.qty-Number(m.total);
+    const diffText=diff===""?"":(diff>0?"+"+diff:diff);
+    const diffClass=diff<0?"status-down":diff>0?"status-up":"";
+    const positions=Object.entries(a.pos).map(([k,v])=>`${k}*${v}`).join("、");
 
     rows+=`<tr>
       <td>${esc(specCell)}</td>
       <td>${esc(m.meter)}</td>
       <td>${esc(m.total)}</td>
-      <td>${esc(h.current)}</td>
+      <td>${esc(a.qty)}</td>
       <td class="${diffClass}">${esc(diffText)}</td>
-      <td>${esc(h.positions||"")}</td>
+      <td>${esc(positions)}</td>
     </tr>`;
   });
 
@@ -371,25 +385,46 @@ function exportCurrentCsv(){const r=[["清點日期","地點","人員","線材�
 
 function xmlEsc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function exportReport(){
-  const ag=aggregate(), grouped=[];
+  const dayEntries=(state.sessions&&state.sessions[activeDate])?state.sessions[activeDate]:[];
+  const ag={};
+
+  dayEntries.forEach(e=>{
+    const k=e.spec+"|"+e.meter;
+    if(!ag[k])ag[k]={qty:0,pos:{}};
+    ag[k].qty+=Number(e.qty)||0;
+    const p=e.person||e.loc;
+    ag[k].pos[p]=(ag[k].pos[p]||0)+(Number(e.qty)||0);
+  });
+
+  if(Object.keys(ag).length===0){
+    return alert(`${activeDate} 沒有本次清點明細，無法匯出。`);
+  }
+
+  const grouped=[];
   let maxPos=1;
+
   state.master.forEach(m=>{
     const a=ag[m.spec+"|"+m.meter];
-    const hist=state.history.find(h=>h.date===activeDate&&h.spec===m.spec&&h.meter===m.meter);
     let current="",diff="",positions=[];
-    if(a){current=a.qty;diff=m.total===""?"":a.qty-Number(m.total);positions=Object.entries(a.pos).map(([k,v])=>`${k}*${v}`)}
-    else if(hist){current=hist.current;diff=m.total===""?"":Number(hist.current)-Number(m.total);positions=String(hist.positions||"").split("、").filter(Boolean)}
+    if(a){
+      current=a.qty;
+      diff=m.total===""?"":a.qty-Number(m.total);
+      positions=Object.entries(a.pos).map(([k,v])=>`${k}*${v}`);
+    }
     maxPos=Math.max(maxPos,positions.length);
     grouped.push({...m,current,diff,positions});
   });
+
   let rows=[];
   let lastSpec="";
   grouped.forEach(r=>{
-    const specCell=r.spec===lastSpec?"":r.spec;lastSpec=r.spec;
+    const specCell=r.spec===lastSpec?"":r.spec;
+    lastSpec=r.spec;
     rows.push([specCell,r.meter,r.total,r.current,r.diff,...r.positions,...Array(maxPos-r.positions.length).fill("")]);
   });
 
   const headers=["網路線規格","米數","總數量",`${activeDate.replaceAll("-","/")}清點數量`,"差異","位置",...Array(Math.max(0,maxPos-1)).fill("")];
+
   let xml=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>
   <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
   <Styles>
@@ -398,7 +433,9 @@ function exportReport(){
     <Style ss:ID="Spec"><Font ss:Bold="1"/><Interior ss:Color="#FFF2CC" ss:Pattern="Solid"/></Style>
   </Styles>
   <Worksheet ss:Name="清點結果"><Table>`;
+
   xml+="<Row>"+headers.map(h=>`<Cell ss:StyleID="Header"><Data ss:Type="String">${xmlEsc(h)}</Data></Cell>`).join("")+"</Row>";
+
   rows.forEach(r=>{
     xml+="<Row>"+r.map((v,i)=>{
       const num=typeof v==="number"&&Number.isFinite(v);
@@ -406,6 +443,7 @@ function exportReport(){
       return `<Cell${st}><Data ss:Type="${num?"Number":"String"}">${xmlEsc(v)}</Data></Cell>`
     }).join("")+"</Row>";
   });
+
   xml+=`</Table></Worksheet></Workbook>`;
   download(`線材清點_${activeDate}.xml`,"\ufeff"+xml,"application/vnd.ms-excel;charset=utf-8");
 }
