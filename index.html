@@ -26,21 +26,15 @@ input,select{width:100%;font-size:16px;padding:12px;border:1px solid #b9c5d1;bor
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #e8edf2;padding:7px;text-align:left;vertical-align:top}th{background:#f3f6fa}
 @media(max-width:430px){.btn-grid.locations{grid-template-columns:repeat(2,1fr)}.btn-grid.meter{grid-template-columns:repeat(3,1fr)}}
 .status-up{color:#2f6b2f;font-weight:800}.status-down{color:#b00020;font-weight:800}</style>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 <header><div class="title">線材現場清點</div><div class="sub">線材規格以「cable一覽」為準</div></header>
 <main>
 <section id="tab-input" class="tab active">
   <div class="card">
-    <div class="step">目前選擇</div>
-    <div class="summary">
-      <div class="pill">清點日期<b><input id="workDate" type="date" style="margin-top:4px;padding:6px;font-size:14px"></b></div>
-      <div class="pill">地點<b id="sLoc">尚未選擇</b></div>
-      <div class="pill">人員<b id="sPerson">尚未選擇</b></div>
-      <div class="pill">線材<b id="sCable">尚未選擇</b></div>
-      <div class="pill">米數<b id="sMeter">尚未選擇</b></div>
-      <div class="pill">數量<b id="sQty">尚未選擇</b></div>
-    </div>
+    <div class="step">清點日期</div>
+    <input id="workDate" type="date">
   </div>
 
   <div class="card"><div class="step">1. 選地點</div><div id="locBtns" class="btn-grid locations"></div></div>
@@ -86,7 +80,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
   <div class="card">
     <div class="toolbar"><button class="secondary" onclick="exportReport()">匯出 Excel 報表</button><button class="secondary" onclick="exportCurrentCsv()">匯出 CSV 明細</button></div>
     <div class="note" style="margin-top:10px">歷史與 Excel 都直接讀取同一份「本次明細」，不再各存一份數字；差異固定為「清點數量 − 總數量」。</div>
-    <button class="primary" style="margin-top:10px" onclick="finishSession()">確認完成本次清點</button>
+    
   </div>
 </section>
 
@@ -207,11 +201,17 @@ function pickQty(q){sel.qty=q;renderQty();updateSummary()}
 
 
 function updateSummary(){
-  document.getElementById("sLoc").textContent=sel.loc||"尚未選擇";
-  document.getElementById("sPerson").textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇");
-  document.getElementById("sCable").textContent=sel.spec||"尚未選擇";
-  document.getElementById("sMeter").textContent=sel.meter||"尚未選擇";
-  document.getElementById("sQty").textContent=sel.qty||"尚未選擇";
+  const vals={
+    sLoc:sel.loc||"尚未選擇",
+    sPerson:sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇"),
+    sCable:sel.spec||"尚未選擇",
+    sMeter:sel.meter||"尚未選擇",
+    sQty:sel.qty?sel.qty+" 條":"尚未選擇"
+  };
+  Object.entries(vals).forEach(([id,v])=>{
+    const el=document.getElementById(id);
+    if(el)el.textContent=v;
+  });
 }
 function addEntry(){
   const msg=document.getElementById("addMsg");
@@ -225,8 +225,9 @@ function addEntry(){
   const e=entries(),old=e.find(x=>x.key===key);
   if(old)old.qty+=Number(sel.qty);else e.push({key,loc:sel.loc,person,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),time:new Date().toISOString()});
   save();msg.textContent=`已加入：${sel.spec} / ${sel.meter} / ${sel.qty}條`;
-  // 加入成功後，保留清點日期，但其餘選項全部清空，避免下一筆誤用上一筆選擇。
-  sel={loc:"",person:"",main:"",sub:"",spec:"",meter:"",qty:""};
+  // 保留目前地點與人員，方便在同一房間 / 同一座位連續清點。
+  // 線材分類、後段規格、米數、數量則全部重置。
+  sel={loc:sel.loc,person:sel.person,main:"",sub:"",spec:"",meter:"",qty:""};
   render();
 }
 function renderEntries(){
@@ -385,6 +386,10 @@ function exportCurrentCsv(){const r=[["清點日期","地點","人員","線材�
 
 function xmlEsc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function exportReport(){
+  if(typeof XLSX==="undefined"){
+    return alert("Excel 匯出元件尚未載入，請確認網路連線後重新整理頁面。");
+  }
+
   const dayEntries=(state.sessions&&state.sessions[activeDate])?state.sessions[activeDate]:[];
   const ag={};
 
@@ -415,37 +420,35 @@ function exportReport(){
     grouped.push({...m,current,diff,positions});
   });
 
-  let rows=[];
+  const dateHeader=activeDate.replaceAll("-","/");
+  const headers=["網路線規格","米數","總數量",`${dateHeader}清點數量`,"差異","位置",...Array(Math.max(0,maxPos-1)).fill("")];
+
+  const rows=[headers];
   let lastSpec="";
   grouped.forEach(r=>{
     const specCell=r.spec===lastSpec?"":r.spec;
     lastSpec=r.spec;
-    rows.push([specCell,r.meter,r.total,r.current,r.diff,...r.positions,...Array(maxPos-r.positions.length).fill("")]);
+    rows.push([
+      specCell,r.meter,r.total,r.current,r.diff,
+      ...r.positions,
+      ...Array(maxPos-r.positions.length).fill("")
+    ]);
   });
 
-  const headers=["網路線規格","米數","總數量",`${activeDate.replaceAll("-","/")}清點數量`,"差異","位置",...Array(Math.max(0,maxPos-1)).fill("")];
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws["!cols"]=[
+    {wch:22},{wch:10},{wch:10},{wch:18},{wch:10},
+    ...Array.from({length:maxPos},()=>({wch:16}))
+  ];
 
-  let xml=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>
-  <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
-  <Styles>
-    <Style ss:ID="Default"><Alignment ss:Vertical="Center"/><Font ss:FontName="Calibri" ss:Size="11"/></Style>
-    <Style ss:ID="Header"><Font ss:Bold="1"/><Interior ss:Color="#D9EAF7" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center"/></Style>
-    <Style ss:ID="Spec"><Font ss:Bold="1"/><Interior ss:Color="#FFF2CC" ss:Pattern="Solid"/></Style>
-  </Styles>
-  <Worksheet ss:Name="清點結果"><Table>`;
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"清點結果");
 
-  xml+="<Row>"+headers.map(h=>`<Cell ss:StyleID="Header"><Data ss:Type="String">${xmlEsc(h)}</Data></Cell>`).join("")+"</Row>";
-
-  rows.forEach(r=>{
-    xml+="<Row>"+r.map((v,i)=>{
-      const num=typeof v==="number"&&Number.isFinite(v);
-      const st=i===0&&v!==""?' ss:StyleID="Spec"':"";
-      return `<Cell${st}><Data ss:Type="${num?"Number":"String"}">${xmlEsc(v)}</Data></Cell>`
-    }).join("")+"</Row>";
-  });
-
-  xml+=`</Table></Worksheet></Workbook>`;
-  download(`線材清點_${activeDate}.xml`,"\ufeff"+xml,"application/vnd.ms-excel;charset=utf-8");
+  const now=new Date();
+  const y=now.getFullYear();
+  const mo=String(now.getMonth()+1).padStart(2,"0");
+  const da=String(now.getDate()).padStart(2,"0");
+  XLSX.writeFile(wb,`cable清點${y}${mo}${da}.xlsx`);
 }
 function backupJson(){download(`線材清點備份_${activeDate}.json`,JSON.stringify(state,null,2),"application/json;charset=utf-8")}
 function restoreJson(ev){const f=ev.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const o=JSON.parse(rd.result);if(confirm("匯入會覆蓋目前資料，確定？")){state=o;save();render();renderEntries();renderHistory();renderSettings()}}catch(e){alert("備份格式不正確")}};rd.readAsText(f)}
