@@ -12,7 +12,7 @@
 header{position:sticky;top:0;z-index:20;background:var(--nav);color:#fff;padding:12px 14px;box-shadow:0 2px 8px #0002}
 header .title{font-weight:800;font-size:19px}header .sub{font-size:12px;opacity:.86;margin-top:2px}
 main{max-width:760px;margin:auto;padding:12px 12px 90px}.card{background:#fff;border-radius:14px;padding:14px;margin:10px 0;box-shadow:0 2px 10px #00000010;border:1px solid #e8edf3}
-.step{font-weight:800;margin-bottom:9px}.summary{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pill{background:var(--pale);border:1px solid var(--line);border-radius:10px;padding:9px;font-size:13px}.pill b{display:block;font-size:15px;margin-top:2px}
+.step{font-weight:800;margin-bottom:9px}
 .btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btn-grid.locations{grid-template-columns:repeat(4,1fr)}.btn-grid.meter{grid-template-columns:repeat(4,1fr)}
 button{appearance:none;border:1px solid #aebdce;background:#fff;border-radius:11px;padding:11px 7px;font-size:15px;font-weight:700;min-height:46px;color:#1f2937}
 button.active{background:var(--blue);color:#fff;border-color:var(--blue)}button.primary{width:100%;background:var(--green);color:#fff;border:0;font-size:17px;padding:14px}button.secondary{background:#eef2f7}button.danger{background:#fff;color:var(--red);border-color:#e8a2a2}
@@ -393,6 +393,9 @@ localStorage.setItem(KEY,JSON.stringify(state));
 let sel={loc:"",person:"",main:"",sub:"",spec:"",meter:"",qty:""};
 let activeDate=new Date().toISOString().slice(0,10);
 
+// ================================================================
+// 資料儲存
+// ================================================================
 function clone(x){return JSON.parse(JSON.stringify(x))}
 function loadState(){
   let old=null;
@@ -406,8 +409,7 @@ function loadState(){
       // 主檔唯一來源：永遠使用目前 index.html 內建的最新 cable 一覽。
       master:clone(SEED.master),
       sessions:old.sessions||{},
-      history:old.history||[],
-      completedDates:old.completedDates||{}
+      history:old.history||[]
     };
   }
 
@@ -417,8 +419,7 @@ function loadState(){
     people:clone(SEED.people),
     master:clone(SEED.master),
     sessions:{},
-    history:[],
-    completedDates:{}
+    history:[]
   };
 }
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
@@ -426,7 +427,9 @@ function entries(){if(!state.sessions[activeDate])state.sessions[activeDate]=[];
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function labelMain(cat){return cat==="CAT5E"?"5E":cat==="CAT6A"?"6A":cat==="CAT6"?"6":cat==="CAT7"?"7":cat}
 function isPrimary(cat){return ["CAT5E","CAT6A","CAT6","CAT7"].includes(cat)}
-function currentMaster(){return state.master.filter(m=>m.category===sel.main && (!sel.sub || m.subtype===sel.sub))}
+// ================================================================
+// 畫面切換 / 共用 UI
+// ================================================================
 function showTab(n,b){document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById("tab-"+n).classList.add("active");document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");if(n==="current")renderEntries();if(n==="history")renderHistory();if(n==="settings")renderSettings()}
 function btn(t,a,fn){
   const safeFn=String(fn)
@@ -436,7 +439,7 @@ function btn(t,a,fn){
 }
 
 function render(){
-  const de=document.getElementById("workDate");de.value=activeDate;de.onchange=()=>{activeDate=de.value;renderEntries();updateSummary()};
+  const de=document.getElementById("workDate");de.value=activeDate;de.onchange=()=>{activeDate=de.value;renderEntries()};
   document.getElementById("locBtns").innerHTML=state.locations.map((x,i)=>btn(x,sel.loc===x,`pickLoc(${i})`)).join("");
   renderPersonState();
 
@@ -445,14 +448,17 @@ function render(){
     primary.map(c=>btn(labelMain(c),sel.main===c,`pickMain(${JSON.stringify(c)})`)).join("")+
     btn("其他",sel.main==="其他",`pickMain("其他")`);
 
-  renderSubs();renderMeters();renderQty();updateSummary();
+  renderSubs();renderMeters();renderQty();
 }
+// ================================================================
+// 現場清點：地點 / 人員 / 線材 / 米數 / 數量
+// ================================================================
 function pickLoc(i){sel.loc=state.locations[i];render()}
-function chooseNoPerson(){sel.person="__NONE__";renderPersonState();updateSummary()}
+function chooseNoPerson(){sel.person="__NONE__";renderPersonState()}
 function renderPersonState(){let n=document.getElementById("personNow");let no=document.getElementById("btnNoPerson"),p=document.getElementById("btnPickPerson");no.classList.toggle("active",sel.person==="__NONE__");p.classList.toggle("active",!!sel.person&&sel.person!=="__NONE__");n.textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇")}
 function openPeopleModal(){document.getElementById("peopleBtns").innerHTML=state.people.filter(p=>p.status!=="停用").map(p=>btn(p.name,sel.person===p.name,`pickPerson(${JSON.stringify(p.name)})`)).join("");document.getElementById("peopleModal").classList.remove("hidden")}
 function closePeopleModal(){document.getElementById("peopleModal").classList.add("hidden")}
-function pickPerson(n){sel.person=n;closePeopleModal();renderPersonState();updateSummary()}
+function pickPerson(n){sel.person=n;closePeopleModal();renderPersonState()}
 
 function pickMain(c){sel.main=c;sel.sub="";sel.spec="";sel.meter="";sel.qty="";render()}
 function renderSubs(){
@@ -488,22 +494,12 @@ function renderQty(){
   box.innerHTML=[1,2,3,4,5].map(q=>btn(q,Number(sel.qty)===q,`pickQty(${q})`)).join("");
 
 }
-function pickQty(q){sel.qty=q;renderQty();updateSummary()}
+function pickQty(q){sel.qty=q;renderQty()}
 
 
-function updateSummary(){
-  const vals={
-    sLoc:sel.loc||"尚未選擇",
-    sPerson:sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇"),
-    sCable:sel.spec||"尚未選擇",
-    sMeter:sel.meter||"尚未選擇",
-    sQty:sel.qty?sel.qty+" 條":"尚未選擇"
-  };
-  Object.entries(vals).forEach(([id,v])=>{
-    const el=document.getElementById(id);
-    if(el)el.textContent=v;
-  });
-}
+// ================================================================
+// 本次清點明細
+// ================================================================
 function addEntry(){
   const msg=document.getElementById("addMsg");
   if(!sel.loc)return msg.textContent="請先選地點。";
@@ -566,23 +562,13 @@ function moveCurrentDate(){
   document.getElementById("moveDate").value="";
   renderEntries();
   renderHistory();
-  updateSummary();
+  
   alert(`完成：已把清點資料移到 ${target}。`);
 }
-function aggregate(){
-  const map={};entries().forEach(e=>{const k=e.spec+"|"+e.meter;if(!map[k])map[k]={qty:0,pos:{}};map[k].qty+=e.qty;const p=e.person||e.loc;map[k].pos[p]=(map[k].pos[p]||0)+e.qty});return map
-}
-function posText(p){return Object.entries(p||{}).map(([k,v])=>`${k}*${v}`).join("、")}
 
-function finishSession(){
-  const e=entries();
-  if(!e.length)return alert("這個日期還沒有清點資料。");
-  if(!state.completedDates)state.completedDates={};
-  state.completedDates[activeDate]=true;
-  save();
-  renderHistory();
-  alert("已確認這個日期的清點。歷史與 Excel 會直接依這個日期的「本次明細」即時計算，因此之後若再新增或修正，同一天的結果也會同步更新。");
-}
+// ================================================================
+// 歷史查詢
+// ================================================================
 function renderHistory(){
   const box=document.getElementById("historyBox");
   const dateInput=document.getElementById("historyDate");
@@ -665,15 +651,20 @@ function renderHistory(){
       <tbody>${rows}</tbody>
     </table>`;
 }
+// ================================================================
+// 設定頁
+// ================================================================
 function renderSettings(){
   document.getElementById("peopleList").innerHTML=state.people.map((p,i)=>`<div class="list-item"><div><b>${esc(p.name)}</b><div class="item-meta">${esc(p.status)}</div></div><button onclick="toggleP(${i})">${p.status==="停用"?"啟用":"停用"}</button></div>`).join("")
 }
 
+// ================================================================
+// CSV / Excel / JSON 匯出匯入
+// ================================================================
 function csvCell(v){v=String(v??"");return /[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v}
 function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function exportCurrentCsv(){const r=[["清點日期","地點","人員","線材規格","米數","數量"],...entries().map(x=>[activeDate,x.loc,x.person||"未指定",x.spec,x.meter,x.qty])];download(`本次清點明細_${activeDate}.csv`,"\ufeff"+r.map(x=>x.map(csvCell).join(",")).join("\r\n"),"text/csv;charset=utf-8")}
 
-function xmlEsc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function exportReport(){
   if(typeof XLSX==="undefined"){
     return alert("Excel 匯出元件尚未載入，請確認網路連線後重新整理頁面。");
@@ -756,8 +747,7 @@ function restoreJson(ev){
           // 舊 JSON 的 master 不採用，避免舊總數量覆蓋最新版。
           master:clone(SEED.master),
           sessions:o.sessions||{},
-          history:o.history||[],
-          completedDates:o.completedDates||{}
+          history:o.history||[]
         };
         save();
         render();renderEntries();renderHistory();renderSettings();
