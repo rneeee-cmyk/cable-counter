@@ -95,7 +95,14 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
   </div>
 </section>
 <section id="tab-settings" class="tab">
-  <div class="card"><div class="step">人員設定</div><div style="display:grid;grid-template-columns:1fr auto;gap:8px"><input id="newPerson" placeholder="輸入新人姓名"><button class="secondary" onclick="addPerson()">新增</button></div><div id="peopleList"></div></div>
+  <div class="card">
+  <div class="step">人員主檔</div>
+  <div class="note" style="margin-bottom:10px">
+    正式人員名單統一由 GitHub 的 index.html → PEOPLE_MASTER 維護。<br>
+    新增同仁：新增一列；離職／暫停顯示：將狀態改為「停用」。
+  </div>
+  <div id="peopleList"></div>
+</div>
   <div class="card"><div class="step">備份</div><div class="toolbar"><button class="secondary" onclick="backupJson()">匯出備份</button><button class="secondary" onclick="document.getElementById('restoreFile').click()">匯入備份</button></div><input id="restoreFile" type="file" accept=".json" class="hidden" onchange="restoreJson(event)"></div>
 </section>
 </main>
@@ -107,6 +114,74 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 </nav>
 
 <script>
+// ================================================================
+// ★★★ 人員主檔設定區：新增 / 停用同仁，只改這裡 ★★★
+// ================================================================
+// 格式： [姓名, 狀態]
+// 狀態只使用「使用中」或「停用」
+//
+// 新增新人範例：
+//   ["王小明", "使用中"],
+//
+// 離職 / 暫停顯示：
+//   ["王小明", "停用"],
+//
+// 修改後 Commit changes，所有裝置重新開啟後會使用最新版人員主檔。
+// 舊 JSON 備份中的 people 不會覆蓋這裡。
+// ================================================================
+
+const PEOPLE_MASTER = [
+  ["郭益男", "使用中"],
+  ["吳瑞郁", "使用中"],
+  ["林怡伸", "使用中"],
+  ["黃盈諳", "使用中"],
+  ["王建龍", "使用中"],
+  ["陳建廷", "使用中"],
+  ["陳怡吉", "使用中"],
+  ["張世澔", "使用中"],
+  ["王佳榆", "使用中"],
+  ["李建生", "使用中"],
+  ["劉致遠", "使用中"],
+  ["陳姵伶", "使用中"],
+  ["周政瑩", "使用中"],
+  ["郭映彣", "使用中"],
+  ["黃家靖", "使用中"],
+  ["王韻茹", "使用中"],
+  ["蔡依庭", "使用中"],
+  ["連漢文", "使用中"],
+  ["陳奕帆", "使用中"],
+  ["侯力彰", "使用中"],
+  ["曾郭中", "使用中"],
+  ["徐珮瑋", "使用中"],
+  ["林育愷", "使用中"],
+  ["陳育華", "使用中"],
+  ["陳淇平", "使用中"],
+  ["黃子維", "使用中"],
+  ["賴柏儒", "使用中"],
+  ["劉峻宏", "使用中"],
+  ["黃俊仁", "使用中"],
+  ["李長運", "使用中"],
+  ["徐葳", "使用中"],
+  ["謝昆霖", "使用中"],
+  ["陳思絜", "使用中"],
+  ["周孟賢", "使用中"],
+  ["黃煦閎", "使用中"],
+  ["陳星宇", "使用中"],
+  ["林佳妮", "使用中"],
+  ["陳潤安", "使用中"],
+  ["李宥橙", "使用中"],
+  ["方志豪", "使用中"],
+  ["呂易庭", "使用中"],
+  ["温之飴", "使用中"],
+  ["許庭漢", "使用中"],
+  ["羅天翔", "使用中"],
+  ["曹宇慶", "使用中"],
+  ["方瑋立", "使用中"],
+  ["張原瑋", "使用中"],
+];
+
+const PEOPLE = PEOPLE_MASTER.map(([name, status]) => ({name, status}));
+
 // ================================================================
 // ★★★ CABLE 主檔設定區：新增線材 / 修改總數量，只改這裡 ★★★
 // ================================================================
@@ -306,12 +381,14 @@ const MASTER = CABLE_MASTER.map(([category, subtype, meter, total]) => ({
 const SEED = {
   version: 4,
   locations: ["LAB1", "LAB2", "LAB3", "EMC LAB", "座位區"],
-  people: [{"name": "郭益男", "status": "使用中"}, {"name": "吳瑞郁", "status": "使用中"}, {"name": "林怡伸", "status": "使用中"}, {"name": "黃盈諳", "status": "使用中"}, {"name": "王建龍", "status": "使用中"}, {"name": "陳建廷", "status": "使用中"}, {"name": "陳怡吉", "status": "使用中"}, {"name": "張世澔", "status": "使用中"}, {"name": "王佳榆", "status": "使用中"}, {"name": "李建生", "status": "使用中"}, {"name": "劉致遠", "status": "使用中"}, {"name": "陳姵伶", "status": "使用中"}, {"name": "周政瑩", "status": "使用中"}, {"name": "郭映彣", "status": "使用中"}, {"name": "黃家靖", "status": "使用中"}, {"name": "王韻茹", "status": "使用中"}, {"name": "蔡依庭", "status": "使用中"}, {"name": "連漢文", "status": "使用中"}, {"name": "陳奕帆", "status": "使用中"}, {"name": "侯力彰", "status": "使用中"}, {"name": "曾郭中", "status": "使用中"}, {"name": "徐珮瑋", "status": "使用中"}, {"name": "林育愷", "status": "使用中"}, {"name": "陳育華", "status": "使用中"}, {"name": "陳淇平", "status": "使用中"}, {"name": "黃子維", "status": "使用中"}, {"name": "賴柏儒", "status": "使用中"}, {"name": "劉峻宏", "status": "使用中"}, {"name": "黃俊仁", "status": "使用中"}, {"name": "李長運", "status": "使用中"}, {"name": "徐葳", "status": "使用中"}, {"name": "謝昆霖", "status": "使用中"}, {"name": "陳思絜", "status": "使用中"}, {"name": "周孟賢", "status": "使用中"}, {"name": "黃煦閎", "status": "使用中"}, {"name": "陳星宇", "status": "使用中"}, {"name": "林佳妮", "status": "使用中"}, {"name": "陳潤安", "status": "使用中"}, {"name": "李宥橙", "status": "使用中"}, {"name": "方志豪", "status": "使用中"}, {"name": "呂易庭", "status": "使用中"}, {"name": "温之飴", "status": "使用中"}, {"name": "許庭漢", "status": "使用中"}, {"name": "羅天翔", "status": "使用中"}, {"name": "曹宇慶", "status": "使用中"}, {"name": "方瑋立", "status": "使用中"}, {"name": "張原瑋", "status": "使用中"}],
+  people: PEOPLE,
   master: MASTER
 };
 const KEY="cableCounter_v1";
 let state=loadState();
+// 每次開啟都重新鎖定 index.html 內建的最新版 Cable 與人員主檔
 state.master=clone(SEED.master);
+state.people=clone(SEED.people);
 localStorage.setItem(KEY,JSON.stringify(state));
 let sel={loc:"",person:"",main:"",sub:"",spec:"",meter:"",qty:""};
 let activeDate=new Date().toISOString().slice(0,10);
@@ -325,7 +402,7 @@ function loadState(){
     return {
       version:4,
       locations:[...new Set([...(old.locations||[]),...SEED.locations])],
-      people:old.people||clone(SEED.people),
+      people:clone(SEED.people),
       // 主檔唯一來源：永遠使用目前 index.html 內建的最新 cable 一覽。
       master:clone(SEED.master),
       sessions:old.sessions||{},
@@ -591,8 +668,6 @@ function renderHistory(){
 function renderSettings(){
   document.getElementById("peopleList").innerHTML=state.people.map((p,i)=>`<div class="list-item"><div><b>${esc(p.name)}</b><div class="item-meta">${esc(p.status)}</div></div><button onclick="toggleP(${i})">${p.status==="停用"?"啟用":"停用"}</button></div>`).join("")
 }
-function addPerson(){const el=document.getElementById("newPerson"),v=el.value.trim();if(!v)return;state.people.push({name:v,status:"使用中"});el.value="";save();renderSettings()}
-function toggleP(i){state.people[i].status=state.people[i].status==="停用"?"使用中":"停用";save();renderSettings();render()}
 
 function csvCell(v){v=String(v??"");return /[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v}
 function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
@@ -677,7 +752,7 @@ function restoreJson(ev){
         state={
           version:4,
           locations:[...new Set([...(o.locations||state.locations||[]),...SEED.locations])],
-          people:o.people||state.people||clone(SEED.people),
+          people:clone(SEED.people),
           // 舊 JSON 的 master 不採用，避免舊總數量覆蓋最新版。
           master:clone(SEED.master),
           sessions:o.sessions||{},
