@@ -29,7 +29,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-<header><div class="title">線材現場清點</div><div class="sub">線材規格以「cable一覽」為準</div></header>
+<header><div class="title">SD3_cable清點</div><div class="sub">線材規格以「CABLE_MASTER」為準</div></header>
 <main>
 <section id="tab-input" class="tab active">
   <div class="card">
@@ -87,9 +87,9 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 <section id="tab-history" class="tab">
   <div class="card">
     <div class="step">歷史紀錄</div>
-    <div class="muted" style="margin-bottom:8px">有清點資料的日期會直接列在下方，最近一次排最前面。</div>
+    <div class="muted" style="margin-bottom:8px">有清點資料的日期會直接列在下方</div>
     <div id="historyDateBtns" class="btn-grid" style="margin-bottom:12px"></div>
-    <div class="muted" style="margin-bottom:6px">或直接選擇日期：</div>
+    <div class="muted" style="margin-bottom:6px">直接選擇日期</div>
     <input id="historyDate" type="date">
   </div>
   <div class="card" style="overflow:auto">
