@@ -98,12 +98,19 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 </section>
 <section id="tab-settings" class="tab">
   <div class="card">
-  <div class="step">人員主檔</div>
-  <div class="note" style="margin-bottom:10px">
-    正式人員名單統一由 GitHub 的 people_master.json 維護。<br>
-    新增同仁：新增一列；離職／暫停顯示：將狀態改為「停用」。
-  </div>
+  <div class="step">正式人員名單</div>
+  <div class="muted" style="margin-bottom:8px">來自 people_master.json，只顯示姓名。</div>
   <div id="peopleList"></div>
+</div>
+
+<div class="card">
+  <div class="step">本機自訂人員</div>
+  <div class="muted" style="margin-bottom:8px">只存在這台手機／這個瀏覽器，不會同步到其他裝置。</div>
+  <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+    <input id="newLocalPerson" placeholder="輸入姓名">
+    <button class="secondary" onclick="addLocalPerson()">新增</button>
+  </div>
+  <div id="localPeopleList" style="margin-top:10px"></div>
 </div>
   <div class="card"><div class="step">備份</div><div class="toolbar"><button class="secondary" onclick="backupJson()">匯出備份</button><button class="secondary" onclick="document.getElementById('restoreFile').click()">匯入備份</button></div><input id="restoreFile" type="file" accept=".json" class="hidden" onchange="restoreJson(event)"></div>
 </section>
@@ -119,7 +126,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 // ================================================================
 // 外部主檔：日後只需修改這兩個 JSON
 // cable_master.json ＝ 依線種分組的 Cable 規格 / 米數 / 總數量
-// people_master.json ＝ 人員 / 狀態
+// people_master.json ＝ 正式人員姓名
 // ================================================================
 const SEED = {
   version: 4,
@@ -152,7 +159,7 @@ async function loadMasterFiles(){
     });
   });
 
-  SEED.people=peopleRows.map(([name,status])=>({name,status}));
+  SEED.people=peopleRows.map(name=>({name,status:"使用中"}));
 }
 const KEY="cableCounter_v1";
 let state=null;
@@ -172,7 +179,8 @@ function loadState(){
       version:4,
       locations:[...new Set([...(old.locations||[]),...SEED.locations])],
       people:clone(SEED.people),
-      // 主檔唯一來源：永遠使用目前 index.html 內建的最新 cable 一覽。
+      localPeople:old.localPeople||[],
+      // 主檔唯一來源：永遠使用目前 GitHub 的 Cable 主檔。
       master:clone(SEED.master),
       sessions:old.sessions||{},
       history:old.history||[]
@@ -183,6 +191,7 @@ function loadState(){
     version:4,
     locations:clone(SEED.locations),
     people:clone(SEED.people),
+    localPeople:[],
     master:clone(SEED.master),
     sessions:{},
     history:[]
@@ -222,7 +231,18 @@ function render(){
 function pickLoc(i){sel.loc=state.locations[i];render()}
 function chooseNoPerson(){sel.person="__NONE__";renderPersonState()}
 function renderPersonState(){let n=document.getElementById("personNow");let no=document.getElementById("btnNoPerson"),p=document.getElementById("btnPickPerson");no.classList.toggle("active",sel.person==="__NONE__");p.classList.toggle("active",!!sel.person&&sel.person!=="__NONE__");n.textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇")}
-function openPeopleModal(){document.getElementById("peopleBtns").innerHTML=state.people.filter(p=>p.status!=="停用").map(p=>btn(p.name,sel.person===p.name,`pickPerson(${JSON.stringify(p.name)})`)).join("");document.getElementById("peopleModal").classList.remove("hidden")}
+function getSelectablePeople(){
+  const official=(state.people||[]).map(p=>p.name);
+  const local=(state.localPeople||[]).filter(p=>p.status!=="停用").map(p=>p.name);
+  return [...new Set([...official,...local])];
+}
+function openPeopleModal(){
+  const names=getSelectablePeople();
+  document.getElementById("peopleBtns").innerHTML=names.map(
+    name=>btn(name,sel.person===name,`pickPerson(${JSON.stringify(name)})`)
+  ).join("");
+  document.getElementById("peopleModal").classList.remove("hidden");
+}
 function closePeopleModal(){document.getElementById("peopleModal").classList.add("hidden")}
 function pickPerson(n){sel.person=n;closePeopleModal();renderPersonState()}
 
@@ -460,7 +480,63 @@ function renderHistory(){
 // 設定頁
 // ================================================================
 function renderSettings(){
-  document.getElementById("peopleList").innerHTML=state.people.map((p,i)=>`<div class="list-item"><div><b>${esc(p.name)}</b><div class="item-meta">${esc(p.status)}</div></div><button onclick="toggleP(${i})">${p.status==="停用"?"啟用":"停用"}</button></div>`).join("")
+  const officialBox=document.getElementById("peopleList");
+  if(officialBox){
+    officialBox.innerHTML=(state.people||[]).map(
+      p=>`<div class="list-item"><div><b>${esc(p.name)}</b></div></div>`
+    ).join("");
+  }
+
+  const localBox=document.getElementById("localPeopleList");
+  if(localBox){
+    const lp=state.localPeople||[];
+    localBox.innerHTML=lp.length ? lp.map((p,i)=>`
+      <div class="list-item">
+        <div>
+          <b>${esc(p.name)}</b>
+          <div class="item-meta">${esc(p.status||"使用中")}（本機）</div>
+        </div>
+        <div class="item-actions">
+          <button onclick="toggleLocalPerson(${i})">${p.status==="停用"?"啟用":"停用"}</button>
+          <button class="danger" onclick="deleteLocalPerson(${i})">刪除</button>
+        </div>
+      </div>
+    `).join("") : '<div class="muted">目前沒有本機自訂人員。</div>';
+  }
+}
+
+function addLocalPerson(){
+  const input=document.getElementById("newLocalPerson");
+  const name=(input?.value||"").trim();
+  if(!name)return;
+
+  const allNames=new Set([
+    ...(state.people||[]).map(p=>p.name),
+    ...(state.localPeople||[]).map(p=>p.name)
+  ]);
+  if(allNames.has(name))return alert("這個姓名已經存在。");
+
+  state.localPeople.push({name,status:"使用中"});
+  input.value="";
+  save();
+  renderSettings();
+}
+
+function toggleLocalPerson(i){
+  const p=state.localPeople[i];
+  if(!p)return;
+  p.status=p.status==="停用"?"使用中":"停用";
+  save();
+  renderSettings();
+}
+
+function deleteLocalPerson(i){
+  const p=state.localPeople[i];
+  if(!p)return;
+  if(!confirm(`確定刪除本機自訂人員「${p.name}」？`))return;
+  state.localPeople.splice(i,1);
+  save();
+  renderSettings();
 }
 
 // ================================================================
@@ -549,6 +625,7 @@ function restoreJson(ev){
           version:4,
           locations:[...new Set([...(o.locations||state.locations||[]),...SEED.locations])],
           people:clone(SEED.people),
+          localPeople:state.localPeople||[],
           // 舊 JSON 的 master 不採用，避免舊總數量覆蓋最新版。
           master:clone(SEED.master),
           sessions:o.sessions||{},
