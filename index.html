@@ -87,7 +87,9 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 <section id="tab-history" class="tab">
   <div class="card">
     <div class="step">歷史紀錄</div>
-    <div class="muted" style="margin-bottom:8px">先選清點日期；下方會依照 cable一覽 的線材順序顯示。</div>
+    <div class="muted" style="margin-bottom:8px">有清點資料的日期會直接列在下方，最近一次排最前面。</div>
+    <div id="historyDateBtns" class="btn-grid" style="margin-bottom:12px"></div>
+    <div class="muted" style="margin-bottom:6px">或直接選擇日期：</div>
     <input id="historyDate" type="date">
   </div>
   <div class="card" style="overflow:auto">
@@ -569,14 +571,51 @@ function moveCurrentDate(){
 // ================================================================
 // 歷史查詢
 // ================================================================
+function formatHistoryDate(dateText){
+  const [y,m,d]=String(dateText).split("-");
+  return y&&m&&d ? `${y}/${m}/${d}` : dateText;
+}
+
+function getHistoryDates(){
+  const sessionDates=Object.keys(state.sessions||{}).filter(
+    d=>(state.sessions[d]||[]).length>0
+  );
+  const oldHistoryDates=(state.history||[])
+    .map(x=>x.date)
+    .filter(Boolean);
+
+  return [...new Set([...sessionDates,...oldHistoryDates])]
+    .sort((a,b)=>b.localeCompare(a));
+}
+
+function renderHistoryDateButtons(selected){
+  const box=document.getElementById("historyDateBtns");
+  if(!box)return;
+
+  const dates=getHistoryDates();
+
+  if(!dates.length){
+    box.innerHTML='<div class="muted">目前沒有歷史清點紀錄。</div>';
+    return;
+  }
+
+  box.innerHTML=dates.map(d=>
+    `<button class="${d===selected?"active":""}" onclick="pickHistoryDate('${d}')">${esc(formatHistoryDate(d))}</button>`
+  ).join("");
+}
+
+function pickHistoryDate(dateText){
+  const input=document.getElementById("historyDate");
+  if(input)input.value=dateText;
+  renderHistory();
+}
+
 function renderHistory(){
   const box=document.getElementById("historyBox");
   const dateInput=document.getElementById("historyDate");
   if(!dateInput)return;
 
-  const sessionDates=Object.keys(state.sessions||{}).filter(d=>(state.sessions[d]||[]).length>0);
-  const oldHistoryDates=(state.history||[]).map(x=>x.date);
-  const dates=[...new Set([...sessionDates,...oldHistoryDates])].sort().reverse();
+  const dates=getHistoryDates();
 
   if(!dateInput.value){
     dateInput.value=dates[0]||activeDate;
@@ -584,6 +623,8 @@ function renderHistory(){
   dateInput.onchange=()=>renderHistory();
 
   const selected=dateInput.value;
+  renderHistoryDateButtons(selected);
+
   const dayEntries=(state.sessions&&state.sessions[selected])?state.sessions[selected]:[];
 
   const map={};
@@ -638,7 +679,7 @@ function renderHistory(){
   });
 
   box.innerHTML=`
-    <div style="font-weight:800;font-size:16px;margin-bottom:10px">${esc(selected)} 清點結果</div>
+    <div style="font-weight:800;font-size:16px;margin-bottom:10px">${esc(formatHistoryDate(selected))} 清點結果</div>
     <table>
       <thead><tr>
         <th>網路線規格</th>
