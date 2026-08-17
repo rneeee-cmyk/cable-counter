@@ -118,7 +118,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 <script>
 // ================================================================
 // 外部主檔：日後只需修改這兩個 JSON
-// cable_master.json ＝ Cable 規格 / 米數 / 總數量
+// cable_master.json ＝ 依線種分組的 Cable 規格 / 米數 / 總數量
 // people_master.json ＝ 人員 / 狀態
 // ================================================================
 const SEED = {
@@ -135,11 +135,23 @@ async function loadMasterFiles(){
   ]);
   if(!cableRes.ok)throw new Error("CABLE_MASTER 載入失敗");
   if(!peopleRes.ok)throw new Error("PEOPLE_MASTER 載入失敗");
-  const cableRows=await cableRes.json();
+
+  const cableGroups=await cableRes.json();
   const peopleRows=await peopleRes.json();
-  SEED.master=cableRows.map(([category,subtype,meter,total])=>({
-    category,subtype,spec:subtype?`${category} / ${subtype}`:category,meter,total
-  }));
+
+  SEED.master=[];
+  Object.values(cableGroups).forEach(group=>{
+    (group.items||[]).forEach(([meter,total])=>{
+      SEED.master.push({
+        category:group.category,
+        subtype:group.subtype||"",
+        spec:group.subtype ? `${group.category} / ${group.subtype}` : group.category,
+        meter,
+        total
+      });
+    });
+  });
+
   SEED.people=peopleRows.map(([name,status])=>({name,status}));
 }
 const KEY="cableCounter_v1";
