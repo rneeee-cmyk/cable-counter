@@ -97,12 +97,6 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
   </div>
 </section>
 <section id="tab-settings" class="tab">
-  <div class="card">
-  <div class="step">正式人員名單</div>
-  <div class="muted" style="margin-bottom:8px">來自 people_master.json，只顯示姓名。</div>
-  <div id="peopleList"></div>
-</div>
-
 <div class="card">
   <div class="step">本機自訂人員</div>
   <div class="muted" style="margin-bottom:8px">只存在這台手機／這個瀏覽器，不會同步到其他裝置。</div>
@@ -480,13 +474,6 @@ function renderHistory(){
 // 設定頁
 // ================================================================
 function renderSettings(){
-  const officialBox=document.getElementById("peopleList");
-  if(officialBox){
-    officialBox.innerHTML=(state.people||[]).map(
-      p=>`<div class="list-item"><div><b>${esc(p.name)}</b></div></div>`
-    ).join("");
-  }
-
   const localBox=document.getElementById("localPeopleList");
   if(localBox){
     const lp=state.localPeople||[];
