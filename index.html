@@ -87,9 +87,9 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 <section id="tab-history" class="tab">
   <div class="card">
     <div class="step">歷史紀錄</div>
-    <div class="muted" style="margin-bottom:8px">有清點資料的日期會直接列在下方</div>
+    <div class="muted" style="margin-bottom:8px">有清點資料的日期會直接列在下方，最近一次排最前面。</div>
     <div id="historyDateBtns" class="btn-grid" style="margin-bottom:12px"></div>
-    <div class="muted" style="margin-bottom:6px">或直接選擇日期</div>
+    <div class="muted" style="margin-bottom:6px">或直接選擇日期：</div>
     <input id="historyDate" type="date">
   </div>
   <div class="card" style="overflow:auto">
@@ -97,6 +97,12 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
   </div>
 </section>
 <section id="tab-settings" class="tab">
+  <div class="card">
+  <div class="step">正式人員名單</div>
+  <div class="muted" style="margin-bottom:8px">來自 people_master.json，只顯示姓名。</div>
+  <div id="peopleList"></div>
+</div>
+
 <div class="card">
   <div class="step">本機自訂人員</div>
   <div class="muted" style="margin-bottom:8px">只存在這台手機／這個瀏覽器，不會同步到其他裝置。</div>
@@ -107,6 +113,11 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
   <div id="localPeopleList" style="margin-top:10px"></div>
 </div>
   <div class="card"><div class="step">備份</div><div class="toolbar"><button class="secondary" onclick="backupJson()">匯出備份</button><button class="secondary" onclick="document.getElementById('restoreFile').click()">匯入備份</button></div><input id="restoreFile" type="file" accept=".json" class="hidden" onchange="restoreJson(event)"></div>
+  <div class="card">
+    <div class="step">重置清點紀錄</div>
+    <div class="muted" style="margin-bottom:8px">只清除本機清點明細與歷史，不會刪除本機自訂人員，也不會更改 Cable / 人員主檔。</div>
+    <button class="danger" style="width:100%" onclick="resetCountingRecords()">清除所有清點紀錄</button>
+  </div>
 </section>
 </main>
 
@@ -290,7 +301,14 @@ function addEntry(){
   const person=sel.person==="__NONE__"?"":sel.person;
   const key=[sel.loc,person,sel.spec,sel.meter].join("|");
   const e=entries(),old=e.find(x=>x.key===key);
-  if(old)old.qty+=Number(sel.qty);else e.push({key,loc:sel.loc,person,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),time:new Date().toISOString()});
+  const masterItem=state.master.find(m=>m.spec===sel.spec && m.meter===sel.meter);
+  const snapshotTotal=masterItem ? Number(masterItem.total) : "";
+  if(old){
+    old.qty+=Number(sel.qty);
+    if(old.snapshotTotal===undefined)old.snapshotTotal=snapshotTotal;
+  }else{
+    e.push({key,loc:sel.loc,person,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),snapshotTotal,time:new Date().toISOString()});
+  }
   save();msg.textContent=`已加入：${sel.spec} / ${sel.meter} / ${sel.qty}條`;
   // 保留目前地點與人員，方便在同一房間 / 同一座位連續清點。
   // 線材分類、後段規格、米數、數量則全部重置。
@@ -355,14 +373,8 @@ function formatHistoryDate(dateText){
 }
 
 function getHistoryDates(){
-  const sessionDates=Object.keys(state.sessions||{}).filter(
-    d=>(state.sessions[d]||[]).length>0
-  );
-  const oldHistoryDates=(state.history||[])
-    .map(x=>x.date)
-    .filter(Boolean);
-
-  return [...new Set([...sessionDates,...oldHistoryDates])]
+  return Object.keys(state.sessions||{})
+    .filter(d=>(state.sessions[d]||[]).length>0)
     .sort((a,b)=>b.localeCompare(a));
 }
 
@@ -408,24 +420,13 @@ function renderHistory(){
   const map={};
   dayEntries.forEach(e=>{
     const k=e.spec+"|"+e.meter;
-    if(!map[k])map[k]={qty:0,pos:{}};
+    if(!map[k])map[k]={qty:0,pos:{},snapshotTotal:e.snapshotTotal};
     map[k].qty+=Number(e.qty)||0;
+    if(map[k].snapshotTotal===undefined || map[k].snapshotTotal==="")map[k].snapshotTotal=e.snapshotTotal;
     const p=e.person||e.loc;
     map[k].pos[p]=(map[k].pos[p]||0)+(Number(e.qty)||0);
   });
 
-  // 舊版相容：若只有舊歷史快照、沒有本次明細，仍可顯示。
-  if(Object.keys(map).length===0){
-    (state.history||[]).filter(x=>x.date===selected).forEach(h=>{
-      const k=h.spec+"|"+h.meter;
-      if(!map[k])map[k]={qty:Number(h.current)||0,pos:{}};
-      const parts=String(h.positions||"").split("、").filter(Boolean);
-      parts.forEach(s=>{
-        const mm=s.match(/^(.*)\*(\d+(?:\.\d+)?)$/);
-        if(mm)map[k].pos[mm[1]]=(map[k].pos[mm[1]]||0)+Number(mm[2]);
-      });
-    });
-  }
 
   if(Object.keys(map).length===0){
     box.innerHTML=`<div class="muted">${esc(selected)} 沒有清點紀錄。</div>`;
@@ -441,7 +442,8 @@ function renderHistory(){
     const specCell=(m.spec===lastSpec)?"":m.spec;
     lastSpec=m.spec;
 
-    const diff=m.total===""?"":a.qty-Number(m.total);
+    const total=(a.snapshotTotal!==undefined && a.snapshotTotal!=="") ? Number(a.snapshotTotal) : Number(m.total);
+    const diff=Number.isFinite(total)?a.qty-total:"";
     const diffText=diff===""?"":(diff>0?"+"+diff:diff);
     const diffClass=diff<0?"status-down":diff>0?"status-up":"";
     const positions=Object.entries(a.pos).map(([k,v])=>`${k}*${v}`).join("、");
@@ -449,7 +451,7 @@ function renderHistory(){
     rows+=`<tr>
       <td>${esc(specCell)}</td>
       <td>${esc(m.meter)}</td>
-      <td>${esc(m.total)}</td>
+      <td>${esc(total)}</td>
       <td>${esc(a.qty)}</td>
       <td class="${diffClass}">${esc(diffText)}</td>
       <td>${esc(positions)}</td>
@@ -474,6 +476,13 @@ function renderHistory(){
 // 設定頁
 // ================================================================
 function renderSettings(){
+  const officialBox=document.getElementById("peopleList");
+  if(officialBox){
+    officialBox.innerHTML=(state.people||[]).map(
+      p=>`<div class="list-item"><div><b>${esc(p.name)}</b></div></div>`
+    ).join("");
+  }
+
   const localBox=document.getElementById("localPeopleList");
   if(localBox){
     const lp=state.localPeople||[];
@@ -543,8 +552,9 @@ function exportReport(){
 
   dayEntries.forEach(e=>{
     const k=e.spec+"|"+e.meter;
-    if(!ag[k])ag[k]={qty:0,pos:{}};
+    if(!ag[k])ag[k]={qty:0,pos:{},snapshotTotal:e.snapshotTotal};
     ag[k].qty+=Number(e.qty)||0;
+    if(ag[k].snapshotTotal===undefined || ag[k].snapshotTotal==="")ag[k].snapshotTotal=e.snapshotTotal;
     const p=e.person||e.loc;
     ag[k].pos[p]=(ag[k].pos[p]||0)+(Number(e.qty)||0);
   });
@@ -561,11 +571,14 @@ function exportReport(){
     let current="",diff="",positions=[];
     if(a){
       current=a.qty;
-      diff=m.total===""?"":a.qty-Number(m.total);
+      const frozenTotal=(a.snapshotTotal!==undefined && a.snapshotTotal!=="") ? Number(a.snapshotTotal) : Number(m.total);
+      diff=Number.isFinite(frozenTotal)?a.qty-frozenTotal:"";
       positions=Object.entries(a.pos).map(([k,v])=>`${k}*${v}`);
+      grouped.push({...m,total:frozenTotal,current,diff,positions});
+    }else{
+      grouped.push({...m,current,diff,positions});
     }
     maxPos=Math.max(maxPos,positions.length);
-    grouped.push({...m,current,diff,positions});
   });
 
   const dateHeader=activeDate.replaceAll("-","/");
@@ -598,6 +611,19 @@ function exportReport(){
   const da=String(now.getDate()).padStart(2,"0");
   XLSX.writeFile(wb,`cable清點${y}${mo}${da}.xlsx`);
 }
+function resetCountingRecords(){
+  if(!confirm("確定要清除這台裝置的所有 Cable 清點紀錄？\n\n本機自訂人員會保留。"))return;
+  if(!confirm("再次確認：真的要清除全部清點紀錄？"))return;
+  state.sessions={};
+  state.history=[];
+  save();
+  const hd=document.getElementById("historyDate");
+  if(hd)hd.value="";
+  renderEntries();
+  renderHistory();
+  alert("已清除本機所有清點紀錄。");
+}
+
 function backupJson(){download(`線材清點備份_${activeDate}.json`,JSON.stringify(state,null,2),"application/json;charset=utf-8")}
 function restoreJson(ev){
   const f=ev.target.files[0];
@@ -616,7 +642,7 @@ function restoreJson(ev){
           // 舊 JSON 的 master 不採用，避免舊總數量覆蓋最新版。
           master:clone(SEED.master),
           sessions:o.sessions||{},
-          history:o.history||[]
+          history:[]
         };
         save();
         render();renderEntries();renderHistory();renderSettings();
