@@ -26,7 +26,7 @@ input,select{width:100%;font-size:15px;padding:8px 10px;border:1px solid #b9c5d1
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #e8edf2;padding:7px;text-align:left;vertical-align:top}th{background:#f3f6fa}
 @media(max-width:430px){.btn-grid.locations{grid-template-columns:repeat(2,1fr)}.btn-grid.meter{grid-template-columns:repeat(3,1fr)}}
 .status-up{color:#2f6b2f;font-weight:800}.status-down{color:#b00020;font-weight:800}</style>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 </head>
 <body>
 <header><div class="title">SD3_cable清點</div><div class="sub">線材規格以「CABLE_MASTER」為準</div></header>
@@ -95,12 +95,6 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 </section>
 <section id="tab-settings" class="tab">
   <div class="card">
-  <div class="step">正式人員名單</div>
-  <div class="muted" style="margin-bottom:8px">來自 people_master.json，只顯示姓名。</div>
-  <div id="peopleList"></div>
-</div>
-
-<div class="card">
   <div class="step">本機自訂地點</div>
   <div class="muted" style="margin-bottom:6px">只存在這台手機／這個瀏覽器，不會同步到其他裝置。</div>
   <div style="display:grid;grid-template-columns:1fr auto;gap:6px">
@@ -651,6 +645,23 @@ function exportReport(){
   });
 
   const ws=XLSX.utils.aoa_to_sheet(rows);
+
+  // 恢復 8/10 報表的標題列外觀：淡藍底、黑字、一般細框線
+  const headerStyle={
+    fill:{patternType:"solid",fgColor:{rgb:"DDEBF7"}},
+    font:{bold:false,color:{rgb:"000000"}},
+    alignment:{vertical:"center",horizontal:"left"},
+    border:{
+      top:{style:"thin",color:{rgb:"D9E1F2"}},
+      bottom:{style:"thin",color:{rgb:"D9E1F2"}},
+      left:{style:"thin",color:{rgb:"D9E1F2"}},
+      right:{style:"thin",color:{rgb:"D9E1F2"}}
+    }
+  };
+  for(let c=0;c<rows[0].length;c++){
+    const cell=XLSX.utils.encode_cell({r:0,c});
+    if(ws[cell]) ws[cell].s=headerStyle;
+  }
   ws["!cols"]=[
     {wch:22},{wch:10},{wch:10},{wch:18},{wch:10},
     ...Array.from({length:maxPos},()=>({wch:16}))
