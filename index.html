@@ -41,7 +41,15 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 
   <div class="card">
     <div class="step">2. 選人員</div>
-    <div id="personMainBtns" class="btn-grid"></div>
+    <div class="person-actions person-actions-3">
+      <button id="btnNoPerson" onclick="chooseNoPerson()">未指定</button>
+      <button id="btnPickPerson" onclick="openPeopleModal()">選人員</button>
+      <button id="btnAddLocalPerson" onclick="openAddPersonModal()">新增人員</button>
+    </div>
+    <div id="localQuickPeopleWrap" class="hidden" style="margin-top:6px">
+      <div class="muted" style="margin-bottom:4px">本機自訂人員</div>
+      <div id="localQuickPeople" class="btn-grid"></div>
+    </div>
     <div class="muted" style="margin-top:6px">目前：<b id="personNow">尚未選擇</b></div>
   </div>
 
@@ -128,6 +136,18 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 </section>
 </main>
 
+<div id="addPersonModal" class="modal hidden">
+  <div class="modal-panel" style="padding-bottom:calc(18px + env(safe-area-inset-bottom))">
+    <div class="modal-head">
+      <div class="step" style="margin:0">新增本機人員</div>
+      <button class="secondary" onclick="closeAddPersonModal()">關閉</button>
+    </div>
+    <div class="muted" style="margin-bottom:8px">只存在這台手機／這個瀏覽器，不會加入正式員工名單。</div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+      <input id="quickLocalPerson" placeholder="輸入姓名">
+      <button class="secondary" onclick="quickAddLocalPerson()">新增</button>
+    </div>
+  </div>
 </div>
 
 <div id="peopleModal" class="modal hidden"><div class="modal-panel"><div class="modal-head"><div class="step" style="margin:0">選擇人員</div><button class="secondary" onclick="closePeopleModal()">關閉</button></div><div id="peopleBtns" class="people-grid"></div></div></div>
@@ -233,8 +253,8 @@ function render(){
   const de=document.getElementById("workDate");de.value=activeDate;de.onchange=()=>{activeDate=de.value;renderEntries()};
   const allLocs=getSelectableLocations();
   document.getElementById("locBtns").innerHTML=allLocs.map(x=>btn(x,sel.loc===x,`pickLocName(${JSON.stringify(x)})`)).join("");
-  renderPersonButtons();
   renderPersonState();
+  renderLocalQuickPeople();
 
   const primary=["CAT5E","CAT6A","CAT6","CAT7"];
   document.getElementById("catBtns").innerHTML=
@@ -252,17 +272,17 @@ function getSelectableLocations(){
   return [...new Set([...official,...local])];
 }
 function pickLocName(name){sel.loc=name;render()}
-function chooseNoPerson(){sel.person="__NONE__";renderPersonButtons();renderPersonState()}
-function renderPersonButtons(){
-  const box=document.getElementById("personMainBtns");
-  if(!box)return;
+function chooseNoPerson(){sel.person="__NONE__";renderPersonState()}
+function renderLocalQuickPeople(){
+  const wrap=document.getElementById("localQuickPeopleWrap");
+  const box=document.getElementById("localQuickPeople");
+  if(!wrap||!box)return;
 
   const local=(state.localPeople||[]).filter(p=>p.status!=="停用");
-
-  box.innerHTML=
-    btn("未指定",sel.person==="__NONE__",`chooseNoPerson()`)+
-    btn("選人員",!!sel.person&&sel.person!=="__NONE__"&&!local.some(p=>p.name===sel.person),`openPeopleModal()`)+
-    local.map(p=>btn(p.name,sel.person===p.name,`pickPerson(${JSON.stringify(p.name)})`)).join("");
+  wrap.classList.toggle("hidden",local.length===0);
+  box.innerHTML=local.map(
+    p=>btn(p.name,sel.person===p.name,`pickPerson(${JSON.stringify(p.name)})`)
+  ).join("");
 }
 function renderPersonState(){let n=document.getElementById("personNow");let no=document.getElementById("btnNoPerson"),p=document.getElementById("btnPickPerson");no.classList.toggle("active",sel.person==="__NONE__");p.classList.toggle("active",!!sel.person&&sel.person!=="__NONE__");n.textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇")}
 function getSelectablePeople(){
@@ -278,7 +298,36 @@ function openPeopleModal(){
   document.getElementById("peopleModal").classList.remove("hidden");
 }
 function closePeopleModal(){document.getElementById("peopleModal").classList.add("hidden")}
-function pickPerson(n){sel.person=n;closePeopleModal();renderPersonButtons();renderPersonState()}
+function pickPerson(n){sel.person=n;closePeopleModal();renderPersonState();renderLocalQuickPeople()}
+function openAddPersonModal(){
+  const input=document.getElementById("quickLocalPerson");
+  if(input)input.value="";
+  document.getElementById("addPersonModal").classList.remove("hidden");
+  setTimeout(()=>input&&input.focus(),50);
+}
+function closeAddPersonModal(){
+  document.getElementById("addPersonModal").classList.add("hidden");
+}
+function quickAddLocalPerson(){
+  const input=document.getElementById("quickLocalPerson");
+  const name=(input?.value||"").trim();
+  if(!name)return;
+
+  const officialNames=(state.people||[]).map(p=>p.name);
+  const localNames=(state.localPeople||[]).map(p=>p.name);
+  if(officialNames.includes(name) || localNames.includes(name)){
+    alert("這個姓名已經存在。");
+    return;
+  }
+
+  state.localPeople.push({name,status:"使用中"});
+  sel.person=name;
+  save();
+  closeAddPersonModal();
+  renderPersonState();
+  renderLocalQuickPeople();
+  renderSettings();
+}
 
 
 function pickMain(c){sel.main=c;sel.sub="";sel.spec="";sel.meter="";sel.qty="";render()}
@@ -564,7 +613,7 @@ function addLocalPerson(){
   state.localPeople.push({name,status:"使用中"});
   input.value="";
   save();
-  renderPersonButtons();
+  renderLocalQuickPeople();
   renderSettings();
 }
 
@@ -573,7 +622,7 @@ function toggleLocalPerson(i){
   if(!p)return;
   p.status=p.status==="停用"?"使用中":"停用";
   save();
-  renderPersonButtons();
+  renderLocalQuickPeople();
   renderSettings();
 }
 
@@ -585,7 +634,7 @@ function deleteLocalPerson(i){
   if(sel.person===p.name)sel.person="";
   save();
   renderPersonState();
-  renderPersonButtons();
+  renderLocalQuickPeople();
   renderSettings();
 }
 
