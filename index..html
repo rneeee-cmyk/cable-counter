@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#17365d">
+<title>線材現場清點</title>
+<style>
+:root{--nav:#17365d;--blue:#4472c4;--pale:#eef4fb;--yellow:#fff2cc;--green:#70ad47;--red:#c00000;--line:#d9e2f3;--text:#1f2937}
+*{box-sizing:border-box}body{margin:0;background:#f5f7fa;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif}
+header{position:sticky;top:0;z-index:20;background:var(--nav);color:#fff;padding:8px 12px;box-shadow:0 2px 8px #0002}
+header .title{font-weight:800;font-size:17px}header .sub{font-size:11px;opacity:.86;margin-top:1px}
+main{max-width:760px;margin:auto;padding:8px 8px 82px}.card{background:#fff;border-radius:12px;padding:10px;margin:6px 0;box-shadow:0 2px 8px #00000010;border:1px solid #e8edf3}
+.step{font-weight:800;margin-bottom:6px;font-size:15px}
+.btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btn-grid.locations{grid-template-columns:repeat(4,1fr)}.btn-grid.meter{grid-template-columns:repeat(4,1fr)}
+button{appearance:none;border:1px solid #aebdce;background:#fff;border-radius:10px;padding:8px 6px;font-size:14px;font-weight:700;min-height:38px;color:#1f2937}
+button.active{background:var(--blue);color:#fff;border-color:var(--blue)}button.primary{width:100%;background:var(--green);color:#fff;border:0;font-size:17px;padding:14px}button.secondary{background:#eef2f7}button.danger{background:#fff;color:var(--red);border-color:#e8a2a2}
+input,select{width:100%;font-size:15px;padding:8px 10px;border:1px solid #b9c5d1;border-radius:9px;background:#fff}.muted{color:#6b7280;font-size:12px}.hidden{display:none!important}
+.person-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.person-actions-3{grid-template-columns:repeat(3,1fr)}.qty{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.qty button{min-height:38px}.qty input{min-width:0;text-align:center;font-weight:700}
+.list-item{border-top:1px solid #edf0f4;padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:8px}.list-item:first-child{border-top:0}.item-title{font-weight:800}.item-meta{font-size:13px;color:#64748b;margin-top:3px}.item-actions{display:flex;gap:5px;align-items:center}.item-actions button{min-height:34px;padding:5px 9px;font-size:14px}
+.tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dfe5ec;display:grid;grid-template-columns:repeat(4,1fr);z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+.tabs button{border:0;border-radius:0;background:#fff;font-size:12px;padding:9px 2px;min-height:52px}.tabs button.active{color:var(--blue);background:#eef4fb}.tab{display:none}.tab.active{display:block}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar button{flex:1}.note{background:#fff8e6;border:1px solid #f1d38a;padding:10px;border-radius:10px;font-size:13px}
+.modal{position:fixed;inset:0;background:#0006;display:flex;align-items:flex-end;justify-content:center;z-index:100}.modal.hidden{display:none}.modal-panel{width:100%;max-width:760px;max-height:78vh;background:#fff;border-radius:18px 18px 0 0;padding:14px;overflow:auto}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #e8edf2;padding:7px;text-align:left;vertical-align:top}th{background:#f3f6fa}
+@media(max-width:430px){.btn-grid.locations{grid-template-columns:repeat(2,1fr)}.btn-grid.meter{grid-template-columns:repeat(3,1fr)}}
+.status-up{color:#2f6b2f;font-weight:800}.status-down{color:#b00020;font-weight:800}</style>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<header><div class="title">SD3_cable清點</div><div class="sub">線材規格以「CABLE_MASTER」為準</div></header>
+<main>
+<section id="tab-input" class="tab active">
+  <div class="card">
+    <div class="step">清點日期</div>
+    <input id="workDate" type="date">
+  </div>
+
+  <div class="card"><div class="step">1. 選地點</div><div id="locBtns" class="btn-grid locations"></div></div>
+
+  <div class="card">
+    <div class="step">2. 選人員</div>
+    <div id="personMainBtns" class="btn-grid"></div>
+    <div class="muted" style="margin-top:6px">目前：<b id="personNow">尚未選擇</b></div>
+  </div>
+
+  <div class="card"><div class="step">3. 選線材</div><div id="catBtns" class="btn-grid"></div></div>
+  <div id="subCard" class="card hidden"><div class="step" id="subTitle">4. 選規格</div><div id="subBtns" class="btn-grid"></div></div>
+
+  <div id="meterCard" class="card hidden">
+    <div class="step">5. 選米數</div>
+    <div class="muted" style="margin-bottom:8px">只會顯示這個線材在 cable一覽 中實際存在的米數。</div>
+    <div id="meterBtns" class="btn-grid meter"></div>
+  </div>
+
+  <div id="qtyCard" class="card hidden">
+    <div class="step">6. 選數量</div>
+    <div class="muted" style="margin-bottom:8px">這裡是「你現在這個地點/人員實際點到幾條」，直接按 1～3；數量較多時可手動輸入。</div>
+    <div id="qtyBtns" class="qty"></div>
+    
+  </div>
+
+  <div class="card"><button class="primary" onclick="addEntry()">＋ 加入本次清點</button><div id="addMsg" class="muted" style="margin-top:8px"></div></div>
+</section>
+
+<section id="tab-current" class="tab">
+  <div class="card"><div class="step">本次已清點 <span id="entryCount"></span></div><div id="entryList"></div><div id="emptyEntry" class="muted">尚未加入資料。</div></div>
+  <div class="card">
+    <div class="step">清點日期修正</div>
+    <div class="muted" style="margin-bottom:8px">如果誤選日期，可把目前日期的全部明細移到正確日期；目標日期已有資料時會自動合併。</div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+      <input id="moveDate" type="date">
+      <button class="secondary" onclick="moveCurrentDate()">整批移到此日期</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="toolbar"><button class="secondary" onclick="exportReport()">匯出 Excel 報表</button><button class="secondary" onclick="exportCurrentCsv()">匯出 CSV 明細</button></div>
+    <div class="note" style="margin-top:10px">歷史與 Excel 都直接讀取同一份「本次明細」，不再各存一份數字；差異固定為「清點數量 − 總數量」。</div>
+    
+  </div>
+</section>
+
+<section id="tab-history" class="tab">
+  <div class="card">
+    <div class="step">歷史紀錄</div>
+    <div class="muted" style="margin-bottom:8px">有清點資料的日期會直接列在下方，最近一次排最前面。</div>
+    <div id="historyDateBtns" class="btn-grid" style="margin-bottom:12px"></div>
+    <div class="muted" style="margin-bottom:6px">或直接選擇日期：</div>
+    <input id="historyDate" type="date">
+  </div>
+  <div class="card" style="overflow:auto">
+    <div id="historyBox"></div>
+  </div>
+</section>
+<section id="tab-settings" class="tab">
+  <div class="card">
+  <div class="step">正式人員名單</div>
+  <div class="muted" style="margin-bottom:8px">來自 people_master.json，只顯示姓名。</div>
+  <div id="peopleList"></div>
+</div>
+
+<div class="card">
+  <div class="step">本機自訂地點</div>
+  <div class="muted" style="margin-bottom:6px">只存在這台手機／這個瀏覽器，不會同步到其他裝置。</div>
+  <div style="display:grid;grid-template-columns:1fr auto;gap:6px">
+    <input id="newLocalLocation" placeholder="輸入地點">
+    <button class="secondary" onclick="addLocalLocation()">新增</button>
+  </div>
+  <div id="localLocationList" style="margin-top:8px"></div>
+</div>
+
+<div class="card">
+  <div class="step">本機自訂人員</div>
+  <div class="muted" style="margin-bottom:8px">只存在這台手機／這個瀏覽器，不會同步到其他裝置。</div>
+  <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+    <input id="newLocalPerson" placeholder="輸入姓名">
+    <button class="secondary" onclick="addLocalPerson()">新增</button>
+  </div>
+  <div id="localPeopleList" style="margin-top:10px"></div>
+</div>
+  <div class="card"><div class="step">備份</div><div class="toolbar"><button class="secondary" onclick="backupJson()">匯出備份</button><button class="secondary" onclick="document.getElementById('restoreFile').click()">匯入備份</button></div><input id="restoreFile" type="file" accept=".json" class="hidden" onchange="restoreJson(event)"></div>
+  <div class="card">
+    <div class="step">重置清點紀錄</div>
+    <div class="muted" style="margin-bottom:8px">只清除本機清點明細與歷史，不會刪除本機自訂地點或本機自訂人員，也不會更改 Cable / 人員主檔。</div>
+    <button class="danger" style="width:100%" onclick="resetCountingRecords()">清除所有清點紀錄</button>
+  </div>
+</section>
+</main>
+
+</div>
+
+<div id="peopleModal" class="modal hidden"><div class="modal-panel"><div class="modal-head"><div class="step" style="margin:0">選擇人員</div><button class="secondary" onclick="closePeopleModal()">關閉</button></div><div id="peopleBtns" class="people-grid"></div></div></div>
+
+<nav class="tabs">
+<button class="active" onclick="showTab('input',this)">新增清點</button><button onclick="showTab('current',this)">本次明細</button><button onclick="showTab('history',this)">歷史</button><button onclick="showTab('settings',this)">設定</button>
+</nav>
+
+<script>
+// ================================================================
+// 外部主檔：日後只需修改這兩個 JSON
+// cable_master.json ＝ 依線種分組的 Cable 規格 / 米數 / 總數量
+// people_master.json ＝ 正式人員姓名
+// ================================================================
+const SEED = {
+  version: 4,
+  locations: ["LAB1", "LAB2", "LAB3", "EMC LAB", "座位區"],
+  people: [],
+  master: []
+};
+
+async function loadMasterFiles(){
+  const [cableRes,peopleRes]=await Promise.all([
+    fetch("./cable_master.json",{cache:"no-store"}),
+    fetch("./people_master.json",{cache:"no-store"})
+  ]);
+  if(!cableRes.ok)throw new Error("CABLE_MASTER 載入失敗");
+  if(!peopleRes.ok)throw new Error("PEOPLE_MASTER 載入失敗");
+
+  const cableGroups=await cableRes.json();
+  const peopleRows=await peopleRes.json();
+
+  SEED.master=[];
+  Object.values(cableGroups).forEach(group=>{
+    (group.items||[]).forEach(([meter,total])=>{
+      SEED.master.push({
+        category:group.category,
+        subtype:group.subtype||"",
+        spec:group.subtype ? `${group.category} / ${group.subtype}` : group.category,
+        meter,
+        total
+      });
+    });
+  });
+
+  SEED.people=peopleRows.map(name=>({name,status:"使用中"}));
+}
+const KEY="cableCounter_v1";
+let state=null;
+let sel={loc:"",person:"",main:"",sub:"",spec:"",meter:"",qty:""};
+let activeDate=new Date().toISOString().slice(0,10);
+
+// ================================================================
+// 資料儲存
+// ================================================================
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function loadState(){
+  let old=null;
+  try{old=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+
+  if(old){
+    return {
+      version:4,
+      locations:[...new Set([...(old.locations||[]),...SEED.locations])],
+      people:clone(SEED.people),
+      localPeople:old.localPeople||[],
+      localLocations:old.localLocations||[],
+      // 主檔唯一來源：永遠使用目前 GitHub 的 Cable 主檔。
+      master:clone(SEED.master),
+      sessions:old.sessions||{},
+      history:old.history||[]
+    };
+  }
+
+  return {
+    version:4,
+    locations:clone(SEED.locations),
+    people:clone(SEED.people),
+    localPeople:[],
+    localLocations:[],
+    master:clone(SEED.master),
+    sessions:{},
+    history:[]
+  };
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function entries(){if(!state.sessions[activeDate])state.sessions[activeDate]=[];return state.sessions[activeDate]}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function labelMain(cat){return cat==="CAT5E"?"5E":cat==="CAT6A"?"6A":cat==="CAT6"?"6":cat==="CAT7"?"7":cat}
+function isPrimary(cat){return ["CAT5E","CAT6A","CAT6","CAT7"].includes(cat)}
+// ================================================================
+// 畫面切換 / 共用 UI
+// ================================================================
+function showTab(n,b){document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById("tab-"+n).classList.add("active");document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");if(n==="current")renderEntries();if(n==="history")renderHistory();if(n==="settings")renderSettings()}
+function btn(t,a,fn){
+  const safeFn=String(fn)
+    .replace(/&/g,"&amp;")
+    .replace(/'/g,"&#39;");
+  return `<button class="${a?"active":""}" onclick='${safeFn}'>${esc(t)}</button>`;
+}
+
+function render(){
+  const de=document.getElementById("workDate");de.value=activeDate;de.onchange=()=>{activeDate=de.value;renderEntries()};
+  const allLocs=getSelectableLocations();
+  document.getElementById("locBtns").innerHTML=allLocs.map(x=>btn(x,sel.loc===x,`pickLocName(${JSON.stringify(x)})`)).join("");
+  renderPersonButtons();
+  renderPersonState();
+
+  const primary=["CAT5E","CAT6A","CAT6","CAT7"];
+  document.getElementById("catBtns").innerHTML=
+    primary.map(c=>btn(labelMain(c),sel.main===c,`pickMain(${JSON.stringify(c)})`)).join("")+
+    btn("其他",sel.main==="其他",`pickMain("其他")`);
+
+  renderSubs();renderMeters();renderQty();
+}
+// ================================================================
+// 現場清點：地點 / 人員 / 線材 / 米數 / 數量
+// ================================================================
+function getSelectableLocations(){
+  const official=state.locations||[];
+  const local=(state.localLocations||[]).filter(x=>x.status!=="停用").map(x=>x.name);
+  return [...new Set([...official,...local])];
+}
+function pickLocName(name){sel.loc=name;render()}
+function chooseNoPerson(){sel.person="__NONE__";renderPersonButtons();renderPersonState()}
+function renderPersonButtons(){
+  const box=document.getElementById("personMainBtns");
+  if(!box)return;
+
+  const local=(state.localPeople||[]).filter(p=>p.status!=="停用");
+
+  box.innerHTML=
+    btn("未指定",sel.person==="__NONE__",`chooseNoPerson()`)+
+    btn("選人員",!!sel.person&&sel.person!=="__NONE__"&&!local.some(p=>p.name===sel.person),`openPeopleModal()`)+
+    local.map(p=>btn(p.name,sel.person===p.name,`pickPerson(${JSON.stringify(p.name)})`)).join("");
+}
+function renderPersonState(){let n=document.getElementById("personNow");let no=document.getElementById("btnNoPerson"),p=document.getElementById("btnPickPerson");no.classList.toggle("active",sel.person==="__NONE__");p.classList.toggle("active",!!sel.person&&sel.person!=="__NONE__");n.textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇")}
+function getSelectablePeople(){
+  const official=(state.people||[]).map(p=>p.name);
+  const local=(state.localPeople||[]).filter(p=>p.status!=="停用").map(p=>p.name);
+  return [...new Set([...official,...local])];
+}
+function openPeopleModal(){
+  const official=(state.people||[]).map(p=>p.name);
+  document.getElementById("peopleBtns").innerHTML=official.map(
+    name=>btn(name,sel.person===name,`pickPerson(${JSON.stringify(name)})`)
+  ).join("");
+  document.getElementById("peopleModal").classList.remove("hidden");
+}
+function closePeopleModal(){document.getElementById("peopleModal").classList.add("hidden")}
+function pickPerson(n){sel.person=n;closePeopleModal();renderPersonButtons();renderPersonState()}
+
+
+function pickMain(c){sel.main=c;sel.sub="";sel.spec="";sel.meter="";sel.qty="";render()}
+function renderSubs(){
+  const card=document.getElementById("subCard"),box=document.getElementById("subBtns");
+  if(!sel.main){card.classList.add("hidden");return}
+  card.classList.remove("hidden");
+  if(sel.main==="其他"){
+    document.getElementById("subTitle").textContent="4. 選其他線材";
+    const others=[...new Set(state.master.filter(m=>!isPrimary(m.category)).map(m=>m.category))];
+    box.innerHTML=others.map(c=>btn(c,sel.sub===c,`pickOther(${JSON.stringify(c)})`)).join("");
+  }else{
+    document.getElementById("subTitle").textContent=`4. 選 ${labelMain(sel.main)} 後段規格`;
+    const subs=[...new Set(state.master.filter(m=>m.category===sel.main).map(m=>m.subtype).filter(Boolean))];
+    box.innerHTML=subs.map(s=>btn(s,sel.sub===s,`pickSub(${JSON.stringify(s)})`)).join("");
+    if(subs.length===1 && !sel.sub){sel.sub=subs[0];sel.spec=`${sel.main} / ${sel.sub}`;setTimeout(()=>render(),0)}
+  }
+}
+function pickSub(s){sel.sub=s;sel.spec=`${sel.main} / ${s}`;sel.meter="";sel.qty="";render()}
+function pickOther(c){sel.sub=c;sel.spec=c;sel.meter="";sel.qty="";render()}
+
+function renderMeters(){
+  const card=document.getElementById("meterCard"),box=document.getElementById("meterBtns");
+  if(!sel.spec){card.classList.add("hidden");return}
+  let ms=[...new Set(state.master.filter(m=>m.spec===sel.spec).map(m=>m.meter))];
+  card.classList.remove("hidden");
+  box.innerHTML=ms.map(m=>btn(m,sel.meter===m,`pickMeter(${JSON.stringify(m)})`)).join("");
+}
+function pickMeter(m){sel.meter=m;sel.qty="";render()}
+function renderQty(){
+  const card=document.getElementById("qtyCard"),box=document.getElementById("qtyBtns");
+  if(!sel.meter){card.classList.add("hidden");return}
+  card.classList.remove("hidden");
+  box.innerHTML=[1,2,3].map(q=>btn(q,Number(sel.qty)===q,`pickQty(${q})`)).join("")+
+    `<input id="manualQty" type="number" min="1" step="1" inputmode="numeric" placeholder="手動"
+      value="${Number(sel.qty)>3?esc(sel.qty):""}" oninput="pickManualQty(this.value)">`;
+}
+function pickQty(q){sel.qty=q;renderQty()}
+function pickManualQty(v){
+  const n=parseInt(v,10);
+  sel.qty=(Number.isInteger(n)&&n>0)?n:"";
+}
+
+
+// ================================================================
+// 本次清點明細
+// ================================================================
+function addEntry(){
+  const msg=document.getElementById("addMsg");
+  if(!sel.loc)return msg.textContent="請先選地點。";
+  if(!sel.person)return msg.textContent="請按「未指定」或選擇人員。";
+  if(!sel.spec)return msg.textContent="請先選線材。";
+  if(!sel.meter)return msg.textContent="請先選米數。";
+  if(!(Number(sel.qty)>0))return msg.textContent="請先選數量。";
+  const person=sel.person==="__NONE__"?"":sel.person;
+  const key=[sel.loc,person,sel.spec,sel.meter].join("|");
+  const e=entries(),old=e.find(x=>x.key===key);
+  const masterItem=state.master.find(m=>m.spec===sel.spec && m.meter===sel.meter);
+  const snapshotTotal=masterItem ? Number(masterItem.total) : "";
+  if(old){
+    old.qty+=Number(sel.qty);
+    if(old.snapshotTotal===undefined)old.snapshotTotal=snapshotTotal;
+  }else{
+    e.push({key,loc:sel.loc,person,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),snapshotTotal,time:new Date().toISOString()});
+  }
+  save();msg.textContent=`已加入：${sel.spec} / ${sel.meter} / ${sel.qty}條`;
+  // 保留目前地點與人員，方便在同一房間 / 同一座位連續清點。
+  // 線材分類、後段規格、米數、數量則全部重置。
+  sel={loc:sel.loc,person:sel.person,main:sel.main,sub:sel.sub,spec:sel.spec,meter:sel.meter,qty:""};
+  render();
+}
+function renderEntries(){
+  const e=entries();document.getElementById("entryCount").textContent=`(${activeDate} / ${e.length} 筆)`;document.getElementById("emptyEntry").classList.toggle("hidden",e.length>0);
+  document.getElementById("entryList").innerHTML=e.map((x,i)=>`<div class="list-item"><div><div class="item-title">${esc(x.spec)}　${esc(x.meter)}　× ${x.qty}</div><div class="item-meta">${esc(x.loc)} / ${esc(x.person||"未指定")}</div></div><div class="item-actions"><button onclick="adj(${i},-1)">−</button><button onclick="adj(${i},1)">＋</button><button class="danger" onclick="delE(${i})">刪</button></div></div>`).join("")
+}
+function adj(i,d){const e=entries();e[i].qty+=d;if(e[i].qty<=0)e.splice(i,1);save();renderEntries()}
+function delE(i){if(confirm("刪除這筆？")){entries().splice(i,1);save();renderEntries()}}
+function moveCurrentDate(){
+  const target=document.getElementById("moveDate").value;
+  if(!target)return alert("請先選擇要移到哪一天。");
+  if(target===activeDate)return alert("目標日期和目前日期相同。");
+
+  const srcEntries=state.sessions[activeDate]||[];
+  if(!srcEntries.length)return alert("目前這個日期沒有清點資料可以移動。");
+
+  if(!confirm(`確定把 ${activeDate} 的 ${srcEntries.length} 筆清點明細全部移到 ${target}？\n如果目標日期已有資料，會自動合併。`))return;
+
+  if(!state.sessions[target])state.sessions[target]=[];
+  const dest=state.sessions[target];
+
+  srcEntries.forEach(x=>{
+    const old=dest.find(d=>d.key===x.key);
+    if(old){
+      old.qty+=Number(x.qty);
+      old.time=new Date().toISOString();
+    }else{
+      dest.push({...x});
+    }
+  });
+
+  delete state.sessions[activeDate];
+
+  // 若誤選日期的資料已經按過「完成本次清點」，歷史日期也一起修正。
+  (state.history||[]).forEach(h=>{
+    if(h.date===activeDate){
+      h.date=target;
+      h.histKey=target+"|"+h.spec+"|"+h.meter;
+    }
+  });
+
+  save();
+  activeDate=target;
+  document.getElementById("workDate").value=target;
+  document.getElementById("moveDate").value="";
+  renderEntries();
+  renderHistory();
+  
+  alert(`完成：已把清點資料移到 ${target}。`);
+}
+
+// ================================================================
+// 歷史查詢
+// ================================================================
+function formatHistoryDate(dateText){
+  const [y,m,d]=String(dateText).split("-");
+  return y&&m&&d ? `${y}/${m}/${d}` : dateText;
+}
+
+function getHistoryDates(){
+  return Object.keys(state.sessions||{})
+    .filter(d=>(state.sessions[d]||[]).length>0)
+    .sort((a,b)=>b.localeCompare(a));
+}
+
+function renderHistoryDateButtons(selected){
+  const box=document.getElementById("historyDateBtns");
+  if(!box)return;
+
+  const dates=getHistoryDates();
+
+  if(!dates.length){
+    box.innerHTML='<div class="muted">目前沒有歷史清點紀錄。</div>';
+    return;
+  }
+
+  box.innerHTML=dates.map(d=>
+    `<button class="${d===selected?"active":""}" onclick="pickHistoryDate('${d}')">${esc(formatHistoryDate(d))}</button>`
+  ).join("");
+}
+
+function pickHistoryDate(dateText){
+  const input=document.getElementById("historyDate");
+  if(input)input.value=dateText;
+  renderHistory();
+}
+
+function renderHistory(){
+  const box=document.getElementById("historyBox");
+  const dateInput=document.getElementById("historyDate");
+  if(!dateInput)return;
+
+  const dates=getHistoryDates();
+
+  if(!dateInput.value){
+    dateInput.value=dates[0]||activeDate;
+  }
+  dateInput.onchange=()=>renderHistory();
+
+  const selected=dateInput.value;
+  renderHistoryDateButtons(selected);
+
+  const dayEntries=(state.sessions&&state.sessions[selected])?state.sessions[selected]:[];
+
+  const map={};
+  dayEntries.forEach(e=>{
+    const k=e.spec+"|"+e.meter;
+    if(!map[k])map[k]={qty:0,pos:{},snapshotTotal:e.snapshotTotal};
+    map[k].qty+=Number(e.qty)||0;
+    if(map[k].snapshotTotal===undefined || map[k].snapshotTotal==="")map[k].snapshotTotal=e.snapshotTotal;
+    const p=e.person||e.loc;
+    map[k].pos[p]=(map[k].pos[p]||0)+(Number(e.qty)||0);
+  });
+
+
+  if(Object.keys(map).length===0){
+    box.innerHTML=`<div class="muted">${esc(selected)} 沒有清點紀錄。</div>`;
+    return;
+  }
+
+  let rows="";
+  let lastSpec="";
+  state.master.forEach(m=>{
+    const a=map[m.spec+"|"+m.meter];
+    if(!a)return;
+
+    const specCell=(m.spec===lastSpec)?"":m.spec;
+    lastSpec=m.spec;
+
+    const total=(a.snapshotTotal!==undefined && a.snapshotTotal!=="") ? Number(a.snapshotTotal) : Number(m.total);
+    const diff=Number.isFinite(total)?a.qty-total:"";
+    const diffText=diff===""?"":(diff>0?"+"+diff:diff);
+    const diffClass=diff<0?"status-down":diff>0?"status-up":"";
+    const positions=Object.entries(a.pos).map(([k,v])=>`${k}*${v}`).join("、");
+
+    rows+=`<tr>
+      <td>${esc(specCell)}</td>
+      <td>${esc(m.meter)}</td>
+      <td>${esc(total)}</td>
+      <td>${esc(a.qty)}</td>
+      <td class="${diffClass}">${esc(diffText)}</td>
+      <td>${esc(positions)}</td>
+    </tr>`;
+  });
+
+  box.innerHTML=`
+    <div style="font-weight:800;font-size:16px;margin-bottom:10px">${esc(formatHistoryDate(selected))} 清點結果</div>
+    <table>
+      <thead><tr>
+        <th>網路線規格</th>
+        <th>米數</th>
+        <th>總數量</th>
+        <th>清點數量</th>
+        <th>差異</th>
+        <th>位置</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+// ================================================================
+// 設定頁
+// ================================================================
+function renderSettings(){
+  const locBox=document.getElementById("localLocationList");
+  if(locBox){
+    const ll=state.localLocations||[];
+    locBox.innerHTML=ll.length ? ll.map((x,i)=>`
+      <div class="list-item"><div><b>${esc(x.name)}</b><div class="item-meta">${esc(x.status||"使用中")}（本機）</div></div>
+      <div class="item-actions"><button onclick="toggleLocalLocation(${i})">${x.status==="停用"?"啟用":"停用"}</button><button class="danger" onclick="deleteLocalLocation(${i})">刪除</button></div></div>
+    `).join("") : '<div class="muted">目前沒有本機自訂地點。</div>';
+  }
+  const localBox=document.getElementById("localPeopleList");
+  if(localBox){
+    const lp=state.localPeople||[];
+    localBox.innerHTML=lp.length ? lp.map((p,i)=>`
+      <div class="list-item"><div><b>${esc(p.name)}</b><div class="item-meta">${esc(p.status||"使用中")}（本機）</div></div>
+      <div class="item-actions"><button onclick="toggleLocalPerson(${i})">${p.status==="停用"?"啟用":"停用"}</button><button class="danger" onclick="deleteLocalPerson(${i})">刪除</button></div></div>
+    `).join("") : '<div class="muted">目前沒有本機自訂人員。</div>';
+  }
+}
+
+function addLocalLocation(){
+  const input=document.getElementById("newLocalLocation");
+  const name=(input?.value||"").trim();
+  if(!name)return;
+  const allNames=new Set([...(state.locations||[]),...(state.localLocations||[]).map(x=>x.name)]);
+  if(allNames.has(name))return alert("這個地點已經存在。");
+  state.localLocations.push({name,status:"使用中"});
+  input.value="";save();render();renderSettings();
+}
+function toggleLocalLocation(i){
+  const x=state.localLocations[i]; if(!x)return;
+  x.status=x.status==="停用"?"使用中":"停用"; save();render();renderSettings();
+}
+function deleteLocalLocation(i){
+  const x=state.localLocations[i]; if(!x)return;
+  if(!confirm(`確定刪除本機自訂地點「${x.name}」？`))return;
+  state.localLocations.splice(i,1);
+  if(sel.loc===x.name)sel.loc="";
+  save();render();renderSettings();
+}
+
+function addLocalPerson(){
+  const input=document.getElementById("newLocalPerson");
+  const name=(input?.value||"").trim();
+  if(!name)return;
+
+  const allNames=new Set([
+    ...(state.people||[]).map(p=>p.name),
+    ...(state.localPeople||[]).map(p=>p.name)
+  ]);
+  if(allNames.has(name))return alert("這個姓名已經存在。");
+
+  state.localPeople.push({name,status:"使用中"});
+  input.value="";
+  save();
+  renderPersonButtons();
+  renderSettings();
+}
+
+function toggleLocalPerson(i){
+  const p=state.localPeople[i];
+  if(!p)return;
+  p.status=p.status==="停用"?"使用中":"停用";
+  save();
+  renderPersonButtons();
+  renderSettings();
+}
+
+function deleteLocalPerson(i){
+  const p=state.localPeople[i];
+  if(!p)return;
+  if(!confirm(`確定刪除本機自訂人員「${p.name}」？`))return;
+  state.localPeople.splice(i,1);
+  if(sel.person===p.name)sel.person="";
+  save();
+  renderPersonState();
+  renderPersonButtons();
+  renderSettings();
+}
+
+// ================================================================
+// CSV / Excel / JSON 匯出匯入
+// ================================================================
+function csvCell(v){v=String(v??"");return /[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v}
+function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportCurrentCsv(){const r=[["清點日期","地點","人員","線材規格","米數","數量"],...entries().map(x=>[activeDate,x.loc,x.person||"未指定",x.spec,x.meter,x.qty])];download(`本次清點明細_${activeDate}.csv`,"\ufeff"+r.map(x=>x.map(csvCell).join(",")).join("\r\n"),"text/csv;charset=utf-8")}
+
+function exportReport(){
+  if(typeof XLSX==="undefined"){
+    return alert("Excel 匯出元件尚未載入，請確認網路連線後重新整理頁面。");
+  }
+
+  const dayEntries=(state.sessions&&state.sessions[activeDate])?state.sessions[activeDate]:[];
+  const ag={};
+
+  dayEntries.forEach(e=>{
+    const k=e.spec+"|"+e.meter;
+    if(!ag[k])ag[k]={qty:0,pos:{},snapshotTotal:e.snapshotTotal};
+    ag[k].qty+=Number(e.qty)||0;
+    if(ag[k].snapshotTotal===undefined || ag[k].snapshotTotal==="")ag[k].snapshotTotal=e.snapshotTotal;
+    const p=e.person||e.loc;
+    ag[k].pos[p]=(ag[k].pos[p]||0)+(Number(e.qty)||0);
+  });
+
+  if(Object.keys(ag).length===0){
+    return alert(`${activeDate} 沒有本次清點明細，無法匯出。`);
+  }
+
+  const grouped=[];
+  let maxPos=1;
+
+  state.master.forEach(m=>{
+    const a=ag[m.spec+"|"+m.meter];
+    let current="",diff="",positions=[];
+    if(a){
+      current=a.qty;
+      const frozenTotal=(a.snapshotTotal!==undefined && a.snapshotTotal!=="") ? Number(a.snapshotTotal) : Number(m.total);
+      diff=Number.isFinite(frozenTotal)?a.qty-frozenTotal:"";
+      positions=Object.entries(a.pos).map(([k,v])=>`${k}*${v}`);
+      grouped.push({...m,total:frozenTotal,current,diff,positions});
+    }else{
+      grouped.push({...m,current,diff,positions});
+    }
+    maxPos=Math.max(maxPos,positions.length);
+  });
+
+  const dateHeader=activeDate.replaceAll("-","/");
+  const headers=["網路線規格","米數","總數量",`${dateHeader}清點數量`,"差異","位置",...Array(Math.max(0,maxPos-1)).fill("")];
+
+  const rows=[headers];
+  let lastSpec="";
+  grouped.forEach(r=>{
+    const specCell=r.spec===lastSpec?"":r.spec;
+    lastSpec=r.spec;
+    rows.push([
+      specCell,r.meter,r.total,r.current,r.diff,
+      ...r.positions,
+      ...Array(maxPos-r.positions.length).fill("")
+    ]);
+  });
+
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws["!cols"]=[
+    {wch:22},{wch:10},{wch:10},{wch:18},{wch:10},
+    ...Array.from({length:maxPos},()=>({wch:16}))
+  ];
+
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"清點結果");
+
+  const now=new Date();
+  const y=now.getFullYear();
+  const mo=String(now.getMonth()+1).padStart(2,"0");
+  const da=String(now.getDate()).padStart(2,"0");
+  XLSX.writeFile(wb,`cable清點${y}${mo}${da}.xlsx`);
+}
+function resetCountingRecords(){
+  if(!confirm("確定要清除這台裝置的所有 Cable 清點紀錄？\n\n本機自訂地點與本機自訂人員都會保留。"))return;
+  if(!confirm("再次確認：真的要清除全部清點紀錄？"))return;
+  state.sessions={};
+  state.history=[];
+  save();
+  const hd=document.getElementById("historyDate");
+  if(hd)hd.value="";
+  renderEntries();
+  renderHistory();
+  alert("已清除本機所有清點紀錄。");
+}
+
+function backupJson(){download(`線材清點備份_${activeDate}.json`,JSON.stringify(state,null,2),"application/json;charset=utf-8")}
+function restoreJson(ev){
+  const f=ev.target.files[0];
+  if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const o=JSON.parse(rd.result);
+      if(!o || typeof o!=="object") throw new Error("invalid");
+      if(confirm("匯入備份會更新目前清點資料。線材主檔與總數量仍固定使用目前網頁最新版，確定匯入？")){
+        state={
+          version:4,
+          locations:[...new Set([...(o.locations||state.locations||[]),...SEED.locations])],
+          people:clone(SEED.people),
+          localPeople:state.localPeople||[],
+          localLocations:state.localLocations||[],
+          // 舊 JSON 的 master 不採用，避免舊總數量覆蓋最新版。
+          master:clone(SEED.master),
+          sessions:o.sessions||{},
+          history:[]
+        };
+        save();
+        render();renderEntries();renderHistory();renderSettings();
+        alert("備份匯入完成。線材規格與總數量已固定使用目前網頁最新版。");
+      }
+    }catch(e){alert("備份格式不正確")}
+    finally{ev.target.value=""}
+  };
+  rd.readAsText(f);
+}
+async function initApp(){
+  try{
+    await loadMasterFiles();
+    state=loadState();
+    // 清點歷史仍讀取原本 cableCounter_v1，不更換抽屜名稱。
+    state.master=clone(SEED.master);
+    state.people=clone(SEED.people);
+    localStorage.setItem(KEY,JSON.stringify(state));
+    render();renderEntries();renderHistory();renderSettings();
+    document.body.dataset.appReady="1";
+  }catch(err){
+    console.error(err);
+    document.querySelector("main").innerHTML=
+      `<div class="card"><div class="step">主檔載入失敗</div>
+       <div class="muted">請確認 index.html、cable_master.json、people_master.json 三個檔案都放在 GitHub 同一層，再重新整理。</div></div>`;
+  }
+}
+initApp();
+</script>
+</body></html>
