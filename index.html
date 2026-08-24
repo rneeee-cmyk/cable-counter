@@ -9,22 +9,22 @@
 <style>
 :root{--nav:#17365d;--blue:#4472c4;--pale:#eef4fb;--yellow:#fff2cc;--green:#70ad47;--red:#c00000;--line:#d9e2f3;--text:#1f2937}
 *{box-sizing:border-box}body{margin:0;background:#f5f7fa;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif}
-header{position:sticky;top:0;z-index:20;background:var(--nav);color:#fff;padding:7px 12px;box-shadow:0 2px 8px #0002}
-header .title{font-weight:800;font-size:17px}header .sub{font-size:10px;opacity:.86;margin-top:1px}
-main{max-width:760px;margin:auto;padding:6px 8px 72px}.card{background:#fff;border-radius:11px;padding:8px;margin:5px 0;box-shadow:0 1px 6px #0000000d;border:1px solid #e8edf3}
-.step{font-weight:800;margin-bottom:5px}
-.btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.btn-grid.locations{grid-template-columns:repeat(5,1fr)}.btn-grid.meter{grid-template-columns:repeat(4,1fr)}
-button{appearance:none;border:1px solid #aebdce;background:#fff;border-radius:9px;padding:7px 5px;font-size:14px;font-weight:700;min-height:38px;color:#1f2937}
-button.active{background:var(--blue);color:#fff;border-color:var(--blue)}button.primary{width:100%;background:var(--green);color:#fff;border:0;font-size:16px;padding:9px;min-height:40px}button.secondary{background:#eef2f7}button.danger{background:#fff;color:var(--red);border-color:#e8a2a2}
-input,select{width:100%;font-size:15px;padding:8px;border:1px solid #b9c5d1;border-radius:9px;background:#fff}.muted{color:#6b7280;font-size:13px}.hidden{display:none!important}
-.person-actions{display:grid;grid-template-columns:1fr 1fr;gap:5px}.qty{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;align-items:stretch}.qty button,.qty input{min-height:38px;height:38px}
-.list-item{border-top:1px solid #edf0f4;padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:8px}.list-item:first-child{border-top:0}.item-title{font-weight:800}.item-meta{font-size:13px;color:#64748b;margin-top:3px}.item-actions{display:flex;gap:5px;align-items:center}.item-actions button{width:42px;height:38px;min-height:38px;padding:0;font-size:16px;display:flex;align-items:center;justify-content:center}
+header{position:sticky;top:0;z-index:20;background:var(--nav);color:#fff;padding:8px 12px;box-shadow:0 2px 8px #0002}
+header .title{font-weight:800;font-size:17px}header .sub{font-size:11px;opacity:.86;margin-top:1px}
+main{max-width:760px;margin:auto;padding:8px 8px 82px}.card{background:#fff;border-radius:12px;padding:10px;margin:6px 0;box-shadow:0 2px 8px #00000010;border:1px solid #e8edf3}
+.step{font-weight:800;margin-bottom:6px;font-size:15px}
+.btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btn-grid.locations{grid-template-columns:repeat(4,1fr)}.btn-grid.meter{grid-template-columns:repeat(4,1fr)}
+button{appearance:none;border:1px solid #aebdce;background:#fff;border-radius:10px;padding:8px 6px;font-size:14px;font-weight:700;min-height:38px;color:#1f2937}
+button.active{background:var(--blue);color:#fff;border-color:var(--blue)}button.primary{width:100%;background:var(--green);color:#fff;border:0;font-size:17px;padding:14px}button.secondary{background:#eef2f7}button.danger{background:#fff;color:var(--red);border-color:#e8a2a2}
+input,select{width:100%;font-size:15px;padding:8px 10px;border:1px solid #b9c5d1;border-radius:9px;background:#fff}.muted{color:#6b7280;font-size:12px}.hidden{display:none!important}
+.person-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.qty{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.qty button{min-height:38px}.qty input{min-width:0;text-align:center;font-weight:700}
+.list-item{border-top:1px solid #edf0f4;padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:8px}.list-item:first-child{border-top:0}.item-title{font-weight:800}.item-meta{font-size:13px;color:#64748b;margin-top:3px}.item-actions{display:flex;gap:5px;align-items:center}.item-actions button{min-height:34px;padding:5px 9px;font-size:14px}
 .tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dfe5ec;display:grid;grid-template-columns:repeat(4,1fr);z-index:30;padding-bottom:env(safe-area-inset-bottom)}
 .tabs button{border:0;border-radius:0;background:#fff;font-size:12px;padding:9px 2px;min-height:52px}.tabs button.active{color:var(--blue);background:#eef4fb}.tab{display:none}.tab.active{display:block}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar button{flex:1}.note{background:#fff8e6;border:1px solid #f1d38a;padding:10px;border-radius:10px;font-size:13px}
 .modal{position:fixed;inset:0;background:#0006;display:flex;align-items:flex-end;justify-content:center;z-index:100}.modal.hidden{display:none}.modal-panel{width:100%;max-width:760px;max-height:78vh;background:#fff;border-radius:18px 18px 0 0;padding:14px;overflow:auto}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #e8edf2;padding:7px;text-align:left;vertical-align:top}th{background:#f3f6fa}
-@media(max-width:430px){.btn-grid.locations{grid-template-columns:repeat(3,1fr)}.btn-grid.meter{grid-template-columns:repeat(4,1fr)}#tab-input .muted{font-size:11px}#tab-input .card{padding:7px;margin:4px 0}}
+@media(max-width:430px){.btn-grid.locations{grid-template-columns:repeat(2,1fr)}.btn-grid.meter{grid-template-columns:repeat(3,1fr)}}
 .status-up{color:#2f6b2f;font-weight:800}.status-down{color:#b00020;font-weight:800}</style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -59,7 +59,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 
   <div id="qtyCard" class="card hidden">
     <div class="step">6. 選數量</div>
-    <div class="muted" style="margin-bottom:8px">直接按 1～3，數量較多可在右側手動輸入。</div>
+    <div class="muted" style="margin-bottom:8px">這裡是「你現在這個地點/人員實際點到幾條」，直接按 1～3；數量較多時可手動輸入。</div>
     <div id="qtyBtns" class="qty"></div>
     
   </div>
@@ -98,18 +98,34 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 </section>
 <section id="tab-settings" class="tab">
   <div class="card">
-    <div class="step">本機自訂地點</div>
-    <div class="muted" style="margin-bottom:8px">只存在這台手機／這個瀏覽器，不會同步到其他裝置。</div>
-    <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
-      <input id="newLocalLocation" placeholder="輸入地點">
-      <button class="secondary" onclick="addLocalLocation()">新增</button>
-    </div>
-    <div id="localLocationList" style="margin-top:10px"></div>
+  <div class="step">正式人員名單</div>
+  <div class="muted" style="margin-bottom:8px">來自 people_master.json，只顯示姓名。</div>
+  <div id="peopleList"></div>
+</div>
+
+<div class="card">
+  <div class="step">本機自訂地點</div>
+  <div class="muted" style="margin-bottom:6px">只存在這台手機／這個瀏覽器，不會同步到其他裝置。</div>
+  <div style="display:grid;grid-template-columns:1fr auto;gap:6px">
+    <input id="newLocalLocation" placeholder="輸入地點">
+    <button class="secondary" onclick="addLocalLocation()">新增</button>
   </div>
+  <div id="localLocationList" style="margin-top:8px"></div>
+</div>
+
+<div class="card">
+  <div class="step">本機自訂人員</div>
+  <div class="muted" style="margin-bottom:8px">只存在這台手機／這個瀏覽器，不會同步到其他裝置。</div>
+  <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+    <input id="newLocalPerson" placeholder="輸入姓名">
+    <button class="secondary" onclick="addLocalPerson()">新增</button>
+  </div>
+  <div id="localPeopleList" style="margin-top:10px"></div>
+</div>
   <div class="card"><div class="step">備份</div><div class="toolbar"><button class="secondary" onclick="backupJson()">匯出備份</button><button class="secondary" onclick="document.getElementById('restoreFile').click()">匯入備份</button></div><input id="restoreFile" type="file" accept=".json" class="hidden" onchange="restoreJson(event)"></div>
   <div class="card">
     <div class="step">重置清點紀錄</div>
-    <div class="muted" style="margin-bottom:8px">只清除本機清點明細與歷史，不會刪除本機自訂地點，也不會更改 Cable / 人員主檔。</div>
+    <div class="muted" style="margin-bottom:8px">只清除本機清點明細與歷史，不會刪除本機自訂地點或本機自訂人員，也不會更改 Cable / 人員主檔。</div>
     <button class="danger" style="width:100%" onclick="resetCountingRecords()">清除所有清點紀錄</button>
   </div>
 </section>
@@ -176,10 +192,10 @@ function loadState(){
   if(old){
     return {
       version:4,
-      locations:clone(SEED.locations),
-      localLocations:old.localLocations||[],
+      locations:[...new Set([...(old.locations||[]),...SEED.locations])],
       people:clone(SEED.people),
       localPeople:old.localPeople||[],
+      localLocations:old.localLocations||[],
       // 主檔唯一來源：永遠使用目前 GitHub 的 Cable 主檔。
       master:clone(SEED.master),
       sessions:old.sessions||{},
@@ -190,9 +206,9 @@ function loadState(){
   return {
     version:4,
     locations:clone(SEED.locations),
-    localLocations:[],
     people:clone(SEED.people),
     localPeople:[],
+    localLocations:[],
     master:clone(SEED.master),
     sessions:{},
     history:[]
@@ -216,7 +232,8 @@ function btn(t,a,fn){
 
 function render(){
   const de=document.getElementById("workDate");de.value=activeDate;de.onchange=()=>{activeDate=de.value;renderEntries()};
-  document.getElementById("locBtns").innerHTML=getSelectableLocations().map(x=>btn(x,sel.loc===x,`pickLoc(${JSON.stringify(x)})`)).join("");
+  const allLocs=getSelectableLocations();
+  document.getElementById("locBtns").innerHTML=allLocs.map(x=>btn(x,sel.loc===x,`pickLocName(${JSON.stringify(x)})`)).join("");
   renderPersonState();
 
   const primary=["CAT5E","CAT6A","CAT6","CAT7"];
@@ -234,17 +251,27 @@ function getSelectableLocations(){
   const local=(state.localLocations||[]).filter(x=>x.status!=="停用").map(x=>x.name);
   return [...new Set([...official,...local])];
 }
-function pickLoc(name){sel.loc=name;render()}
+function pickLocName(name){sel.loc=name;render()}
 function chooseNoPerson(){sel.person="__NONE__";renderPersonState()}
 function renderPersonState(){let n=document.getElementById("personNow");let no=document.getElementById("btnNoPerson"),p=document.getElementById("btnPickPerson");no.classList.toggle("active",sel.person==="__NONE__");p.classList.toggle("active",!!sel.person&&sel.person!=="__NONE__");n.textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇")}
 function getSelectablePeople(){
-  return (state.people||[]).map(p=>p.name);
+  const official=(state.people||[]).map(p=>p.name);
+  const local=(state.localPeople||[]).filter(p=>p.status!=="停用").map(p=>p.name);
+  return [...new Set([...official,...local])];
 }
 function openPeopleModal(){
-  const names=getSelectablePeople();
-  document.getElementById("peopleBtns").innerHTML=names.map(
-    name=>btn(name,sel.person===name,`pickPerson(${JSON.stringify(name)})`)
-  ).join("");
+  const official=(state.people||[]).map(p=>p.name);
+  const local=(state.localPeople||[]).filter(p=>p.status!=="停用").map(p=>p.name);
+  let content="";
+  if(official.length){
+    content+=`<div class="muted" style="grid-column:1/-1;font-weight:700">正式人員</div>`;
+    content+=official.map(name=>btn(name,sel.person===name,`pickPerson(${JSON.stringify(name)})`)).join("");
+  }
+  if(local.length){
+    content+=`<div class="muted" style="grid-column:1/-1;font-weight:700;margin-top:8px">本機自訂人員</div>`;
+    content+=local.map(name=>btn(name,sel.person===name,`pickPerson(${JSON.stringify(name)})`)).join("");
+  }
+  document.getElementById("peopleBtns").innerHTML=content;
   document.getElementById("peopleModal").classList.remove("hidden");
 }
 function closePeopleModal(){document.getElementById("peopleModal").classList.add("hidden")}
@@ -282,14 +309,13 @@ function renderQty(){
   if(!sel.meter){card.classList.add("hidden");return}
   card.classList.remove("hidden");
   box.innerHTML=[1,2,3].map(q=>btn(q,Number(sel.qty)===q,`pickQty(${q})`)).join("")+
-    `<input id="manualQty" type="number" inputmode="numeric" min="1" step="1" placeholder="手動" value="${Number(sel.qty)>3?esc(sel.qty):""}" oninput="pickManualQty(this.value)">`;
-
+    `<input id="manualQty" type="number" min="1" step="1" inputmode="numeric" placeholder="手動"
+      value="${Number(sel.qty)>3?esc(sel.qty):""}" oninput="pickManualQty(this.value)">`;
 }
 function pickQty(q){sel.qty=q;renderQty()}
 function pickManualQty(v){
   const n=parseInt(v,10);
-  sel.qty=Number.isInteger(n)&&n>0?n:"";
-  document.querySelectorAll("#qtyBtns button").forEach(b=>b.classList.remove("active"));
+  sel.qty=(Number.isInteger(n)&&n>0)?n:"";
 }
 
 
@@ -315,8 +341,9 @@ function addEntry(){
     e.push({key,loc:sel.loc,person,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),snapshotTotal,time:new Date().toISOString()});
   }
   save();msg.textContent=`已加入：${sel.spec} / ${sel.meter} / ${sel.qty}條`;
-  // 保留目前地點、人員與線材規格；米數與數量重置。
-  sel={loc:sel.loc,person:sel.person,main:sel.main,sub:sel.sub,spec:sel.spec,meter:"",qty:""};
+  // 保留目前地點與人員，方便在同一房間 / 同一座位連續清點。
+  // 線材分類、後段規格、米數、數量則全部重置。
+  sel={loc:sel.loc,person:sel.person,main:sel.main,sub:sel.sub,spec:sel.spec,meter:sel.meter,qty:""};
   render();
 }
 function renderEntries(){
@@ -480,37 +507,77 @@ function renderHistory(){
 // 設定頁
 // ================================================================
 function renderSettings(){
-  const box=document.getElementById("localLocationList");
-  if(!box)return;
-  const list=state.localLocations||[];
-  box.innerHTML=list.length ? list.map((x,i)=>`
-    <div class="list-item">
-      <div><b>${esc(x.name)}</b><div class="item-meta">${esc(x.status||"使用中")}（本機）</div></div>
-      <div class="item-actions">
-        <button onclick="toggleLocalLocation(${i})">${x.status==="停用"?"啟用":"停用"}</button>
-        <button class="danger" onclick="deleteLocalLocation(${i})">刪</button>
-      </div>
-    </div>`).join("") : '<div class="muted">目前沒有本機自訂地點。</div>';
+  const locBox=document.getElementById("localLocationList");
+  if(locBox){
+    const ll=state.localLocations||[];
+    locBox.innerHTML=ll.length ? ll.map((x,i)=>`
+      <div class="list-item"><div><b>${esc(x.name)}</b><div class="item-meta">${esc(x.status||"使用中")}（本機）</div></div>
+      <div class="item-actions"><button onclick="toggleLocalLocation(${i})">${x.status==="停用"?"啟用":"停用"}</button><button class="danger" onclick="deleteLocalLocation(${i})">刪除</button></div></div>
+    `).join("") : '<div class="muted">目前沒有本機自訂地點。</div>';
+  }
+  const localBox=document.getElementById("localPeopleList");
+  if(localBox){
+    const lp=state.localPeople||[];
+    localBox.innerHTML=lp.length ? lp.map((p,i)=>`
+      <div class="list-item"><div><b>${esc(p.name)}</b><div class="item-meta">${esc(p.status||"使用中")}（本機）</div></div>
+      <div class="item-actions"><button onclick="toggleLocalPerson(${i})">${p.status==="停用"?"啟用":"停用"}</button><button class="danger" onclick="deleteLocalPerson(${i})">刪除</button></div></div>
+    `).join("") : '<div class="muted">目前沒有本機自訂人員。</div>';
+  }
 }
 
 function addLocalLocation(){
   const input=document.getElementById("newLocalLocation");
   const name=(input?.value||"").trim();
   if(!name)return;
-  const all=new Set([...(state.locations||[]),...(state.localLocations||[]).map(x=>x.name)]);
-  if(all.has(name))return alert("這個地點已經存在。");
+  const allNames=new Set([...(state.locations||[]),...(state.localLocations||[]).map(x=>x.name)]);
+  if(allNames.has(name))return alert("這個地點已經存在。");
   state.localLocations.push({name,status:"使用中"});
   input.value="";save();render();renderSettings();
 }
 function toggleLocalLocation(i){
-  const x=state.localLocations[i];if(!x)return;
-  x.status=x.status==="停用"?"使用中":"停用";save();render();renderSettings();
+  const x=state.localLocations[i]; if(!x)return;
+  x.status=x.status==="停用"?"使用中":"停用"; save();render();renderSettings();
 }
 function deleteLocalLocation(i){
-  const x=state.localLocations[i];if(!x)return;
+  const x=state.localLocations[i]; if(!x)return;
   if(!confirm(`確定刪除本機自訂地點「${x.name}」？`))return;
+  state.localLocations.splice(i,1);
   if(sel.loc===x.name)sel.loc="";
-  state.localLocations.splice(i,1);save();render();renderSettings();
+  save();render();renderSettings();
+}
+
+function addLocalPerson(){
+  const input=document.getElementById("newLocalPerson");
+  const name=(input?.value||"").trim();
+  if(!name)return;
+
+  const allNames=new Set([
+    ...(state.people||[]).map(p=>p.name),
+    ...(state.localPeople||[]).map(p=>p.name)
+  ]);
+  if(allNames.has(name))return alert("這個姓名已經存在。");
+
+  state.localPeople.push({name,status:"使用中"});
+  input.value="";
+  save();
+  renderSettings();
+}
+
+function toggleLocalPerson(i){
+  const p=state.localPeople[i];
+  if(!p)return;
+  p.status=p.status==="停用"?"使用中":"停用";
+  save();
+  renderSettings();
+}
+
+function deleteLocalPerson(i){
+  const p=state.localPeople[i];
+  if(!p)return;
+  if(!confirm(`確定刪除本機自訂人員「${p.name}」？`))return;
+  state.localPeople.splice(i,1);
+  save();
+  renderSettings();
 }
 
 // ================================================================
@@ -590,7 +657,7 @@ function exportReport(){
   XLSX.writeFile(wb,`cable清點${y}${mo}${da}.xlsx`);
 }
 function resetCountingRecords(){
-  if(!confirm("確定要清除這台裝置的所有 Cable 清點紀錄？\n\n本機自訂地點會保留。"))return;
+  if(!confirm("確定要清除這台裝置的所有 Cable 清點紀錄？\n\n本機自訂地點與本機自訂人員都會保留。"))return;
   if(!confirm("再次確認：真的要清除全部清點紀錄？"))return;
   state.sessions={};
   state.history=[];
@@ -614,10 +681,10 @@ function restoreJson(ev){
       if(confirm("匯入備份會更新目前清點資料。線材主檔與總數量仍固定使用目前網頁最新版，確定匯入？")){
         state={
           version:4,
-          locations:clone(SEED.locations),
-          localLocations:state.localLocations||[],
+          locations:[...new Set([...(o.locations||state.locations||[]),...SEED.locations])],
           people:clone(SEED.people),
           localPeople:state.localPeople||[],
+          localLocations:state.localLocations||[],
           // 舊 JSON 的 master 不採用，避免舊總數量覆蓋最新版。
           master:clone(SEED.master),
           sessions:o.sessions||{},
