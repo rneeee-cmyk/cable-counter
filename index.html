@@ -17,7 +17,7 @@ main{max-width:760px;margin:auto;padding:8px 8px 82px}.card{background:#fff;bord
 button{appearance:none;border:1px solid #aebdce;background:#fff;border-radius:10px;padding:8px 6px;font-size:14px;font-weight:700;min-height:38px;color:#1f2937}
 button.active{background:var(--blue);color:#fff;border-color:var(--blue)}button.primary{width:100%;background:var(--green);color:#fff;border:0;font-size:17px;padding:14px}button.secondary{background:#eef2f7}button.danger{background:#fff;color:var(--red);border-color:#e8a2a2}
 input,select{width:100%;font-size:15px;padding:8px 10px;border:1px solid #b9c5d1;border-radius:9px;background:#fff}.muted{color:#6b7280;font-size:12px}.hidden{display:none!important}
-.person-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.qty{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.qty button{min-height:38px}.qty input{min-width:0;text-align:center;font-weight:700}
+.person-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.person-actions-3{grid-template-columns:repeat(3,1fr)}.qty{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.qty button{min-height:38px}.qty input{min-width:0;text-align:center;font-weight:700}
 .list-item{border-top:1px solid #edf0f4;padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:8px}.list-item:first-child{border-top:0}.item-title{font-weight:800}.item-meta{font-size:13px;color:#64748b;margin-top:3px}.item-actions{display:flex;gap:5px;align-items:center}.item-actions button{min-height:34px;padding:5px 9px;font-size:14px}
 .tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dfe5ec;display:grid;grid-template-columns:repeat(4,1fr);z-index:30;padding-bottom:env(safe-area-inset-bottom)}
 .tabs button{border:0;border-radius:0;background:#fff;font-size:12px;padding:9px 2px;min-height:52px}.tabs button.active{color:var(--blue);background:#eef4fb}.tab{display:none}.tab.active{display:block}
@@ -41,9 +41,10 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 
   <div class="card">
     <div class="step">2. 選人員</div>
-    <div class="person-actions">
+    <div class="person-actions person-actions-3">
       <button id="btnNoPerson" onclick="chooseNoPerson()">未指定</button>
       <button id="btnPickPerson" onclick="openPeopleModal()">選人員</button>
+      <button id="btnAddLocalPerson" onclick="openAddPersonModal()">新增人員</button>
     </div>
     <div class="muted" style="margin-top:8px">目前：<b id="personNow">尚未選擇</b></div>
   </div>
@@ -130,6 +131,20 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
   </div>
 </section>
 </main>
+
+<div id="addPersonModal" class="modal hidden">
+  <div class="modal-panel" style="padding-bottom:calc(18px + env(safe-area-inset-bottom))">
+    <div class="modal-head">
+      <div class="step" style="margin:0">新增本機人員</div>
+      <button class="secondary" onclick="closeAddPersonModal()">關閉</button>
+    </div>
+    <div class="muted" style="margin-bottom:8px">只存在這台手機／這個瀏覽器，不會加入正式員工名單。</div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+      <input id="quickLocalPerson" placeholder="輸入姓名">
+      <button class="secondary" onclick="quickAddLocalPerson()">新增</button>
+    </div>
+  </div>
+</div>
 
 <div id="peopleModal" class="modal hidden"><div class="modal-panel"><div class="modal-head"><div class="step" style="margin:0">選擇人員</div><button class="secondary" onclick="closePeopleModal()">關閉</button></div><div id="peopleBtns" class="people-grid"></div></div></div>
 
@@ -261,21 +276,42 @@ function getSelectablePeople(){
 }
 function openPeopleModal(){
   const official=(state.people||[]).map(p=>p.name);
-  const local=(state.localPeople||[]).filter(p=>p.status!=="停用").map(p=>p.name);
-  let content="";
-  if(official.length){
-    content+=`<div class="muted" style="grid-column:1/-1;font-weight:700">正式人員</div>`;
-    content+=official.map(name=>btn(name,sel.person===name,`pickPerson(${JSON.stringify(name)})`)).join("");
-  }
-  if(local.length){
-    content+=`<div class="muted" style="grid-column:1/-1;font-weight:700;margin-top:8px">本機自訂人員</div>`;
-    content+=local.map(name=>btn(name,sel.person===name,`pickPerson(${JSON.stringify(name)})`)).join("");
-  }
-  document.getElementById("peopleBtns").innerHTML=content;
+  document.getElementById("peopleBtns").innerHTML=official.map(
+    name=>btn(name,sel.person===name,`pickPerson(${JSON.stringify(name)})`)
+  ).join("");
   document.getElementById("peopleModal").classList.remove("hidden");
 }
 function closePeopleModal(){document.getElementById("peopleModal").classList.add("hidden")}
 function pickPerson(n){sel.person=n;closePeopleModal();renderPersonState()}
+function openAddPersonModal(){
+  const input=document.getElementById("quickLocalPerson");
+  if(input)input.value="";
+  document.getElementById("addPersonModal").classList.remove("hidden");
+  setTimeout(()=>input&&input.focus(),50);
+}
+function closeAddPersonModal(){
+  document.getElementById("addPersonModal").classList.add("hidden");
+}
+function quickAddLocalPerson(){
+  const input=document.getElementById("quickLocalPerson");
+  const name=(input?.value||"").trim();
+  if(!name)return;
+
+  const officialNames=(state.people||[]).map(p=>p.name);
+  const localNames=(state.localPeople||[]).map(p=>p.name);
+  if(officialNames.includes(name) || localNames.includes(name)){
+    alert("這個姓名已經存在。");
+    return;
+  }
+
+  state.localPeople.push({name,status:"使用中"});
+  sel.person=name;
+  save();
+  closeAddPersonModal();
+  renderPersonState();
+  renderSettings();
+}
+
 
 function pickMain(c){sel.main=c;sel.sub="";sel.spec="";sel.meter="";sel.qty="";render()}
 function renderSubs(){
