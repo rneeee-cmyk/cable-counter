@@ -46,7 +46,11 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
       <button id="btnPickPerson" onclick="openPeopleModal()">選人員</button>
       <button id="btnAddLocalPerson" onclick="openAddPersonModal()">新增人員</button>
     </div>
-    <div class="muted" style="margin-top:8px">目前：<b id="personNow">尚未選擇</b></div>
+    <div id="localQuickPeopleWrap" class="hidden" style="margin-top:6px">
+      <div class="muted" style="margin-bottom:4px">本機自訂人員</div>
+      <div id="localQuickPeople" class="btn-grid"></div>
+    </div>
+    <div class="muted" style="margin-top:6px">目前：<b id="personNow">尚未選擇</b></div>
   </div>
 
   <div class="card"><div class="step">3. 選線材</div><div id="catBtns" class="btn-grid"></div></div>
@@ -250,6 +254,7 @@ function render(){
   const allLocs=getSelectableLocations();
   document.getElementById("locBtns").innerHTML=allLocs.map(x=>btn(x,sel.loc===x,`pickLocName(${JSON.stringify(x)})`)).join("");
   renderPersonState();
+  renderLocalQuickPeople();
 
   const primary=["CAT5E","CAT6A","CAT6","CAT7"];
   document.getElementById("catBtns").innerHTML=
@@ -268,6 +273,17 @@ function getSelectableLocations(){
 }
 function pickLocName(name){sel.loc=name;render()}
 function chooseNoPerson(){sel.person="__NONE__";renderPersonState()}
+function renderLocalQuickPeople(){
+  const wrap=document.getElementById("localQuickPeopleWrap");
+  const box=document.getElementById("localQuickPeople");
+  if(!wrap||!box)return;
+
+  const local=(state.localPeople||[]).filter(p=>p.status!=="停用");
+  wrap.classList.toggle("hidden",local.length===0);
+  box.innerHTML=local.map(
+    p=>btn(p.name,sel.person===p.name,`pickPerson(${JSON.stringify(p.name)})`)
+  ).join("");
+}
 function renderPersonState(){let n=document.getElementById("personNow");let no=document.getElementById("btnNoPerson"),p=document.getElementById("btnPickPerson");no.classList.toggle("active",sel.person==="__NONE__");p.classList.toggle("active",!!sel.person&&sel.person!=="__NONE__");n.textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇")}
 function getSelectablePeople(){
   const official=(state.people||[]).map(p=>p.name);
@@ -282,7 +298,7 @@ function openPeopleModal(){
   document.getElementById("peopleModal").classList.remove("hidden");
 }
 function closePeopleModal(){document.getElementById("peopleModal").classList.add("hidden")}
-function pickPerson(n){sel.person=n;closePeopleModal();renderPersonState()}
+function pickPerson(n){sel.person=n;closePeopleModal();renderPersonState();renderLocalQuickPeople()}
 function openAddPersonModal(){
   const input=document.getElementById("quickLocalPerson");
   if(input)input.value="";
@@ -309,6 +325,7 @@ function quickAddLocalPerson(){
   save();
   closeAddPersonModal();
   renderPersonState();
+  renderLocalQuickPeople();
   renderSettings();
 }
 
@@ -596,6 +613,7 @@ function addLocalPerson(){
   state.localPeople.push({name,status:"使用中"});
   input.value="";
   save();
+  renderLocalQuickPeople();
   renderSettings();
 }
 
@@ -604,6 +622,7 @@ function toggleLocalPerson(i){
   if(!p)return;
   p.status=p.status==="停用"?"使用中":"停用";
   save();
+  renderLocalQuickPeople();
   renderSettings();
 }
 
@@ -612,7 +631,10 @@ function deleteLocalPerson(i){
   if(!p)return;
   if(!confirm(`確定刪除本機自訂人員「${p.name}」？`))return;
   state.localPeople.splice(i,1);
+  if(sel.person===p.name)sel.person="";
   save();
+  renderPersonState();
+  renderLocalQuickPeople();
   renderSettings();
 }
 
