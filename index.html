@@ -680,7 +680,10 @@ function exportReport(){
       positions=Object.entries(a.pos).map(([k,v])=>`${k}*${v}`);
       grouped.push({...m,total:frozenTotal,current,diff,positions});
     }else{
-      grouped.push({...m,current,diff,positions});
+      current=0;
+      const total=Number(m.total);
+      diff=Number.isFinite(total)?-total:"";
+      grouped.push({...m,total:Number.isFinite(total)?total:m.total,current,diff,positions});
     }
     maxPos=Math.max(maxPos,positions.length);
   });
