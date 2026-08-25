@@ -17,16 +17,15 @@ main{max-width:760px;margin:auto;padding:6px 8px 72px}.card{background:#fff;bord
 button{appearance:none;border:1px solid #aebdce;background:#fff;border-radius:9px;padding:7px 5px;font-size:14px;font-weight:700;min-height:38px;color:#1f2937}
 button.active{background:var(--blue);color:#fff;border-color:var(--blue)}button.primary{width:100%;background:var(--green);color:#fff;border:0;font-size:16px;padding:9px;min-height:40px}button.secondary{background:#eef2f7}button.danger{background:#fff;color:var(--red);border-color:#e8a2a2}
 input,select{width:100%;font-size:15px;padding:8px;border:1px solid #b9c5d1;border-radius:9px;background:#fff}.muted{color:#6b7280;font-size:13px}.hidden{display:none!important}
-.person-actions{display:grid;grid-template-columns:1fr 1fr;gap:5px}.qty{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;align-items:stretch}.qty button,.qty input{min-height:38px;height:38px}
+.person-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:5px}.qty{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;align-items:stretch}.qty button,.qty input{min-height:38px;height:38px}
 .list-item{border-top:1px solid #edf0f4;padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:8px}.list-item:first-child{border-top:0}.item-title{font-weight:800}.item-meta{font-size:13px;color:#64748b;margin-top:3px}.item-actions{display:flex;gap:5px;align-items:center}.item-actions button{width:42px;height:38px;min-height:38px;padding:0;font-size:16px;display:flex;align-items:center;justify-content:center}
 .tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dfe5ec;display:grid;grid-template-columns:repeat(4,1fr);z-index:30;padding-bottom:env(safe-area-inset-bottom)}
 .tabs button{border:0;border-radius:0;background:#fff;font-size:12px;padding:9px 2px;min-height:52px}.tabs button.active{color:var(--blue);background:#eef4fb}.tab{display:none}.tab.active{display:block}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar button{flex:1}.note{background:#fff8e6;border:1px solid #f1d38a;padding:10px;border-radius:10px;font-size:13px}
-.modal{position:fixed;inset:0;background:#0006;display:flex;align-items:flex-end;justify-content:center;z-index:100}.modal.hidden{display:none}.modal-panel{width:100%;max-width:760px;max-height:78vh;background:#fff;border-radius:18px 18px 0 0;padding:14px;overflow:auto}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.modal{position:fixed;inset:0;background:#0006;display:flex;align-items:flex-end;justify-content:center;z-index:100}.modal.hidden{display:none}.modal-panel{width:100%;max-width:760px;max-height:78vh;background:#fff;border-radius:18px 18px 0 0;padding:14px;overflow:auto}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.people-section{margin-top:14px}.people-section:first-child{margin-top:0}.people-section-title{font-weight:800;color:#475569;font-size:13px;margin:0 0 8px}
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #e8edf2;padding:7px;text-align:left;vertical-align:top}th{background:#f3f6fa}
 @media(max-width:430px){.btn-grid.locations{grid-template-columns:repeat(3,1fr)}.btn-grid.meter{grid-template-columns:repeat(4,1fr)}#tab-input .muted{font-size:11px}#tab-input .card{padding:7px;margin:4px 0}}
 .status-up{color:#2f6b2f;font-weight:800}.status-down{color:#b00020;font-weight:800}</style>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 <header><div class="title">SD3_cable清點</div><div class="sub">線材規格以「CABLE_MASTER」為準</div></header>
@@ -41,10 +40,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 
   <div class="card">
     <div class="step">2. 選人員</div>
-    <div class="person-actions">
-      <button id="btnNoPerson" onclick="chooseNoPerson()">未指定</button>
-      <button id="btnPickPerson" onclick="openPeopleModal()">選人員</button>
-    </div>
+    <div id="personActions" class="person-actions"></div>
     <div class="muted" style="margin-top:8px">目前：<b id="personNow">尚未選擇</b></div>
   </div>
 
@@ -106,10 +102,19 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
     </div>
     <div id="localLocationList" style="margin-top:10px"></div>
   </div>
+  <div class="card">
+    <div class="step">本機自訂人員</div>
+    <div class="muted" style="margin-bottom:8px">只存在這台手機／這個瀏覽器，不會寫入 people_master.json。</div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+      <input id="newLocalPerson" placeholder="輸入人員">
+      <button class="secondary" onclick="addLocalPerson()">新增</button>
+    </div>
+    <div id="localPersonList" style="margin-top:10px"></div>
+  </div>
   <div class="card"><div class="step">備份</div><div class="toolbar"><button class="secondary" onclick="backupJson()">匯出備份</button><button class="secondary" onclick="document.getElementById('restoreFile').click()">匯入備份</button></div><input id="restoreFile" type="file" accept=".json" class="hidden" onchange="restoreJson(event)"></div>
   <div class="card">
     <div class="step">重置清點紀錄</div>
-    <div class="muted" style="margin-bottom:8px">只清除本機清點明細與歷史，不會刪除本機自訂地點，也不會更改 Cable / 人員主檔。</div>
+    <div class="muted" style="margin-bottom:8px">只清除本機清點明細與歷史，不會刪除本機自訂地點／人員，也不會更改 Cable / 人員主檔。</div>
     <button class="danger" style="width:100%" onclick="resetCountingRecords()">清除所有清點紀錄</button>
   </div>
 </section>
@@ -123,27 +128,31 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 
 <script>
 // ================================================================
-// 外部主檔：日後只需修改這兩個 JSON
+// 外部主檔：日後只需修改這三個 JSON
 // cable_master.json ＝ 依線種分組的 Cable 規格 / 米數 / 總數量
 // people_master.json ＝ 正式人員姓名
+// location_master.json ＝ 正式地點名稱
 // ================================================================
 const SEED = {
   version: 4,
-  locations: ["LAB1", "LAB2", "LAB3", "EMC LAB", "座位區"],
+  locations: [],
   people: [],
   master: []
 };
 
 async function loadMasterFiles(){
-  const [cableRes,peopleRes]=await Promise.all([
+  const [cableRes,peopleRes,locationRes]=await Promise.all([
     fetch("./cable_master.json",{cache:"no-store"}),
-    fetch("./people_master.json",{cache:"no-store"})
+    fetch("./people_master.json",{cache:"no-store"}),
+    fetch("./location_master.json",{cache:"no-store"})
   ]);
   if(!cableRes.ok)throw new Error("CABLE_MASTER 載入失敗");
   if(!peopleRes.ok)throw new Error("PEOPLE_MASTER 載入失敗");
+  if(!locationRes.ok)throw new Error("LOCATION_MASTER 載入失敗");
 
   const cableGroups=await cableRes.json();
   const peopleRows=await peopleRes.json();
+  const locationRows=await locationRes.json();
 
   SEED.master=[];
   Object.values(cableGroups).forEach(group=>{
@@ -159,6 +168,7 @@ async function loadMasterFiles(){
   });
 
   SEED.people=peopleRows.map(name=>({name,status:"使用中"}));
+  SEED.locations=locationRows.map(name=>String(name).trim()).filter(Boolean);
 }
 const KEY="cableCounter_v1";
 let state=null;
@@ -169,6 +179,14 @@ let activeDate=new Date().toISOString().slice(0,10);
 // 資料儲存
 // ================================================================
 function clone(x){return JSON.parse(JSON.stringify(x))}
+function normalizeLocalRows(rows){
+  return (rows||[]).map(x=>{
+    if(typeof x==="string")return {name:x,status:"使用中"};
+    const name=(x&&x.name?String(x.name).trim():"");
+    if(!name)return null;
+    return {name,status:x.status==="停用"?"停用":"使用中"};
+  }).filter(Boolean);
+}
 function loadState(){
   let old=null;
   try{old=JSON.parse(localStorage.getItem(KEY))}catch(e){}
@@ -177,9 +195,9 @@ function loadState(){
     return {
       version:4,
       locations:clone(SEED.locations),
-      localLocations:old.localLocations||[],
+      localLocations:normalizeLocalRows(old.localLocations),
       people:clone(SEED.people),
-      localPeople:old.localPeople||[],
+      localPeople:normalizeLocalRows(old.localPeople),
       // 主檔唯一來源：永遠使用目前 GitHub 的 Cable 主檔。
       master:clone(SEED.master),
       sessions:old.sessions||{},
@@ -217,7 +235,7 @@ function btn(t,a,fn){
 function render(){
   const de=document.getElementById("workDate");de.value=activeDate;de.onchange=()=>{activeDate=de.value;renderEntries()};
   document.getElementById("locBtns").innerHTML=getSelectableLocations().map(x=>btn(x,sel.loc===x,`pickLoc(${JSON.stringify(x)})`)).join("");
-  renderPersonState();
+  renderPersonActions();
 
   const primary=["CAT5E","CAT6A","CAT6","CAT7"];
   document.getElementById("catBtns").innerHTML=
@@ -235,20 +253,48 @@ function getSelectableLocations(){
   return [...new Set([...official,...local])];
 }
 function pickLoc(name){sel.loc=name;render()}
-function chooseNoPerson(){sel.person="__NONE__";renderPersonState()}
-function renderPersonState(){let n=document.getElementById("personNow");let no=document.getElementById("btnNoPerson"),p=document.getElementById("btnPickPerson");no.classList.toggle("active",sel.person==="__NONE__");p.classList.toggle("active",!!sel.person&&sel.person!=="__NONE__");n.textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇")}
-function getSelectablePeople(){
-  return (state.people||[]).map(p=>p.name);
+function chooseNoPerson(){sel.person="__NONE__";renderPersonActions()}
+function renderPersonState(){
+  let n=document.getElementById("personNow");
+  let no=document.getElementById("btnNoPerson"),p=document.getElementById("btnPickPerson");
+  const official=new Set(getOfficialPeople());
+  if(no)no.classList.toggle("active",sel.person==="__NONE__");
+  if(p)p.classList.toggle("active",!!sel.person&&sel.person!=="__NONE__"&&official.has(sel.person));
+  n.textContent=sel.person==="__NONE__"?"未指定":(sel.person||"尚未選擇");
+}
+function getOfficialPeople(){
+  return (state.people||[]).filter(p=>p.status!=="停用").map(p=>p.name);
+}
+function getLocalPeople(){
+  return (state.localPeople||[]).filter(p=>p.status!=="停用").map(p=>p.name);
+}
+function renderPersonActions(){
+  const box=document.getElementById("personActions");
+  if(!box)return;
+  const local=getLocalPeople();
+  box.innerHTML=[
+    `<button id="btnNoPerson" onclick="chooseNoPerson()">未指定</button>`,
+    `<button id="btnPickPerson" onclick="openPeopleModal()">選人員</button>`,
+    ...local.map(name=>btn(name,sel.person===name,`pickLocalPerson(${JSON.stringify(name)})`))
+  ].join("");
+  renderPersonState();
+}
+function renderPeopleSection(title,names,emptyText){
+  return `<div class="people-section">
+    <div class="people-section-title">${esc(title)}</div>
+    <div class="people-grid">${names.length ? names.map(
+      name=>btn(name,sel.person===name,`pickPerson(${JSON.stringify(name)})`)
+    ).join("") : `<div class="muted">${esc(emptyText)}</div>`}</div>
+  </div>`;
 }
 function openPeopleModal(){
-  const names=getSelectablePeople();
-  document.getElementById("peopleBtns").innerHTML=names.map(
-    name=>btn(name,sel.person===name,`pickPerson(${JSON.stringify(name)})`)
-  ).join("");
+  const official=getOfficialPeople();
+  document.getElementById("peopleBtns").innerHTML=renderPeopleSection("正式人員",official,"people_master.json 目前沒有可選人員。");
   document.getElementById("peopleModal").classList.remove("hidden");
 }
 function closePeopleModal(){document.getElementById("peopleModal").classList.add("hidden")}
-function pickPerson(n){sel.person=n;closePeopleModal();renderPersonState()}
+function pickPerson(n){sel.person=n;closePeopleModal();renderPersonActions()}
+function pickLocalPerson(n){sel.person=n;renderPersonActions()}
 
 function pickMain(c){sel.main=c;sel.sub="";sel.spec="";sel.meter="";sel.qty="";render()}
 function renderSubs(){
@@ -480,10 +526,11 @@ function renderHistory(){
 // 設定頁
 // ================================================================
 function renderSettings(){
-  const box=document.getElementById("localLocationList");
-  if(!box)return;
-  const list=state.localLocations||[];
-  box.innerHTML=list.length ? list.map((x,i)=>`
+  const locBox=document.getElementById("localLocationList");
+  const personBox=document.getElementById("localPersonList");
+  if(!locBox || !personBox)return;
+  const locList=state.localLocations||[];
+  locBox.innerHTML=locList.length ? locList.map((x,i)=>`
     <div class="list-item">
       <div><b>${esc(x.name)}</b><div class="item-meta">${esc(x.status||"使用中")}（本機）</div></div>
       <div class="item-actions">
@@ -491,6 +538,15 @@ function renderSettings(){
         <button class="danger" onclick="deleteLocalLocation(${i})">刪</button>
       </div>
     </div>`).join("") : '<div class="muted">目前沒有本機自訂地點。</div>';
+  const personList=state.localPeople||[];
+  personBox.innerHTML=personList.length ? personList.map((x,i)=>`
+    <div class="list-item">
+      <div><b>${esc(x.name)}</b><div class="item-meta">${esc(x.status||"使用中")}（本機）</div></div>
+      <div class="item-actions">
+        <button onclick="toggleLocalPerson(${i})">${x.status==="停用"?"啟用":"停用"}</button>
+        <button class="danger" onclick="deleteLocalPerson(${i})">刪</button>
+      </div>
+    </div>`).join("") : '<div class="muted">目前沒有本機自訂人員。</div>';
 }
 
 function addLocalLocation(){
@@ -512,6 +568,29 @@ function deleteLocalLocation(i){
   if(sel.loc===x.name)sel.loc="";
   state.localLocations.splice(i,1);save();render();renderSettings();
 }
+function addLocalPerson(){
+  const input=document.getElementById("newLocalPerson");
+  const name=(input?.value||"").trim();
+  if(!name)return;
+  const official=new Set((state.people||[]).map(x=>x.name));
+  const local=new Set((state.localPeople||[]).map(x=>x.name));
+  if(official.has(name))return alert("這個人員已經在正式人員名單。");
+  if(local.has(name))return alert("這個本機人員已經存在。");
+  state.localPeople.push({name,status:"使用中"});
+  input.value="";save();render();renderSettings();
+}
+function toggleLocalPerson(i){
+  const x=state.localPeople[i];if(!x)return;
+  x.status=x.status==="停用"?"使用中":"停用";
+  if(x.status==="停用" && sel.person===x.name)sel.person="";
+  save();render();renderSettings();
+}
+function deleteLocalPerson(i){
+  const x=state.localPeople[i];if(!x)return;
+  if(!confirm(`確定刪除本機自訂人員「${x.name}」？`))return;
+  if(sel.person===x.name)sel.person="";
+  state.localPeople.splice(i,1);save();render();renderSettings();
+}
 
 // ================================================================
 // CSV / Excel / JSON 匯出匯入
@@ -519,12 +598,51 @@ function deleteLocalLocation(i){
 function csvCell(v){v=String(v??"");return /[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v}
 function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function exportCurrentCsv(){const r=[["清點日期","地點","人員","線材規格","米數","數量"],...entries().map(x=>[activeDate,x.loc,x.person||"未指定",x.spec,x.meter,x.qty])];download(`本次清點明細_${activeDate}.csv`,"\ufeff"+r.map(x=>x.map(csvCell).join(",")).join("\r\n"),"text/csv;charset=utf-8")}
+function xmlCell(v,styleId){
+  const style=styleId?` ss:StyleID="${styleId}"`:"";
+  if(v===undefined || v===null || v==="")return `<Cell${style}/>`;
+  const type=typeof v==="number" && Number.isFinite(v) ? "Number" : "String";
+  return `<Cell${style}><Data ss:Type="${type}">${esc(v)}</Data></Cell>`;
+}
+function exportExcelXml(rows){
+  const body=rows.map((row,rowIndex)=>{
+    const cells=row.map((v,colIndex)=>{
+      const styleId=rowIndex===0 ? "Header" : (colIndex===0 && v ? "Spec" : "");
+      return xmlCell(v,styleId);
+    }).join("");
+    return `<Row>${cells}</Row>`;
+  }).join("");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+ <Styles>
+  <Style ss:ID="Default">
+   <Alignment ss:Vertical="Center"/>
+   <Font ss:FontName="Calibri" ss:Size="11"/>
+  </Style>
+  <Style ss:ID="Header">
+   <Font ss:Bold="1"/>
+   <Interior ss:Color="#D9EAF7" ss:Pattern="Solid"/>
+   <Alignment ss:Horizontal="Center"/>
+  </Style>
+  <Style ss:ID="Spec">
+   <Font ss:Bold="1"/>
+   <Interior ss:Color="#FFF2CC" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="清點結果">
+  <Table>
+${body}
+  </Table>
+ </Worksheet>
+</Workbook>`;
+}
 
 function exportReport(){
-  if(typeof XLSX==="undefined"){
-    return alert("Excel 匯出元件尚未載入，請確認網路連線後重新整理頁面。");
-  }
-
   const dayEntries=(state.sessions&&state.sessions[activeDate])?state.sessions[activeDate]:[];
   const ag={};
 
@@ -574,20 +692,11 @@ function exportReport(){
     ]);
   });
 
-  const ws=XLSX.utils.aoa_to_sheet(rows);
-  ws["!cols"]=[
-    {wch:22},{wch:10},{wch:10},{wch:18},{wch:10},
-    ...Array.from({length:maxPos},()=>({wch:16}))
-  ];
-
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"清點結果");
-
   const now=new Date();
   const y=now.getFullYear();
   const mo=String(now.getMonth()+1).padStart(2,"0");
   const da=String(now.getDate()).padStart(2,"0");
-  XLSX.writeFile(wb,`cable清點${y}${mo}${da}.xlsx`);
+  download(`cable清點${y}${mo}${da}.xls`,"\ufeff"+exportExcelXml(rows),"application/vnd.ms-excel;charset=utf-8");
 }
 function resetCountingRecords(){
   if(!confirm("確定要清除這台裝置的所有 Cable 清點紀錄？\n\n本機自訂地點會保留。"))return;
@@ -646,7 +755,7 @@ async function initApp(){
     console.error(err);
     document.querySelector("main").innerHTML=
       `<div class="card"><div class="step">主檔載入失敗</div>
-       <div class="muted">請確認 index.html、cable_master.json、people_master.json 三個檔案都放在 GitHub 同一層，再重新整理。</div></div>`;
+       <div class="muted">請確認 index.html、cable_master.json、people_master.json、location_master.json 四個檔案都放在 GitHub 同一層，再重新整理。</div></div>`;
   }
 }
 initApp();
