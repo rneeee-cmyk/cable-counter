@@ -25,7 +25,23 @@ input,select{width:100%;font-size:15px;padding:8px;border:1px solid #b9c5d1;bord
 .modal{position:fixed;inset:0;background:#0006;display:flex;align-items:flex-end;justify-content:center;z-index:100}.modal.hidden{display:none}.modal-panel{width:100%;max-width:760px;max-height:78vh;background:#fff;border-radius:18px 18px 0 0;padding:14px;overflow:auto}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.people-section{margin-top:14px}.people-section:first-child{margin-top:0}.people-section-title{font-weight:800;color:#475569;font-size:13px;margin:0 0 8px}
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #e8edf2;padding:7px;text-align:left;vertical-align:top}th{background:#f3f6fa}
 @media(max-width:430px){.btn-grid.locations{grid-template-columns:repeat(3,1fr)}.btn-grid.meter{grid-template-columns:repeat(4,1fr)}#tab-input .muted{font-size:11px}#tab-input .card{padding:7px;margin:4px 0}}
-.status-up{color:#2f6b2f;font-weight:800}.status-down{color:#b00020;font-weight:800}</style>
+.status-up{color:#2f6b2f;font-weight:800}.status-down{color:#b00020;font-weight:800}
+/* 手機清點頁緊湊排版：不影響其他頁面 */
+@media (max-width: 600px) {
+  #tab-input .card { padding: 6px 7px; margin: 3px 0; border-radius: 9px; }
+  #tab-input .step { margin-bottom: 3px; font-size: 13px; }
+  #tab-input .btn-grid, #tab-input .person-actions, #tab-input .qty { gap: 4px; }
+  #tab-input button { min-height: 34px; padding: 5px 3px; font-size: 13px; border-radius: 7px; }
+  #tab-input button.primary { min-height: 38px; font-size: 15px; padding: 6px; }
+  #tab-input .qty button, #tab-input .qty input { height: 36px; min-height: 36px; }
+  #tab-input .muted { margin-top: 3px !important; margin-bottom: 3px !important; line-height: 1.3; }
+  #tab-input input, #tab-settings input { font-size: 16px; padding: 5px 7px; min-height: 36px; }
+  header { padding: 4px 10px; }
+  header .title { font-size: 15px; }
+  header .sub { font-size: 10px; }
+  main { padding-top: 4px; }
+}
+</style>
 </head>
 <body>
 <header><div class="title">SD3_cable清點</div><div class="sub">線材規格以「CABLE_MASTER」為準</div></header>
@@ -367,7 +383,7 @@ function addEntry(){
 }
 function renderEntries(){
   const e=entries();document.getElementById("entryCount").textContent=`(${activeDate} / ${e.length} 筆)`;document.getElementById("emptyEntry").classList.toggle("hidden",e.length>0);
-  document.getElementById("entryList").innerHTML=e.map((x,i)=>`<div class="list-item"><div><div class="item-title">${esc(x.spec)}　${esc(x.meter)}　× ${x.qty}</div><div class="item-meta">${esc(x.loc)} / ${esc(x.person||"未指定")}</div></div><div class="item-actions"><button onclick="adj(${i},-1)">−</button><button onclick="adj(${i},1)">＋</button><button class="danger" onclick="delE(${i})">刪</button></div></div>`).join("")
+  document.getElementById("entryList").innerHTML=e.map((x,i)=>({x,i})).reverse().map(({x,i})=>`<div class="list-item"><div><div class="item-title">${esc(x.spec)}　${esc(x.meter)}　× ${x.qty}</div><div class="item-meta">${esc(x.loc)} / ${esc(x.person||"未指定")}</div></div><div class="item-actions"><button onclick="adj(${i},-1)">−</button><button onclick="adj(${i},1)">＋</button><button class="danger" onclick="delE(${i})">刪</button></div></div>`).join("")
 }
 function adj(i,d){const e=entries();e[i].qty+=d;if(e[i].qty<=0)e.splice(i,1);save();renderEntries()}
 function delE(i){if(confirm("刪除這筆？")){entries().splice(i,1);save();renderEntries()}}
