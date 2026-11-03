@@ -367,15 +367,11 @@ function addEntry(){
   if(!(Number(sel.qty)>0))return msg.textContent="請先選數量。";
   const person=sel.person==="__NONE__"?"":sel.person;
   const key=[sel.loc,person,sel.spec,sel.meter].join("|");
-  const e=entries(),old=e.find(x=>x.key===key);
+  const e=entries();
   const masterItem=state.master.find(m=>m.spec===sel.spec && m.meter===sel.meter);
   const snapshotTotal=masterItem ? Number(masterItem.total) : "";
-  if(old){
-    old.qty+=Number(sel.qty);
-    if(old.snapshotTotal===undefined)old.snapshotTotal=snapshotTotal;
-  }else{
-    e.push({key,loc:sel.loc,person,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),snapshotTotal,time:new Date().toISOString()});
-  }
+  // 每次按下加入，都保留為獨立明細；相同規格、地點與人員也不合併。
+  e.push({key,loc:sel.loc,person,spec:sel.spec,meter:sel.meter,qty:Number(sel.qty),snapshotTotal,time:new Date().toISOString()});
   save();msg.textContent=`已加入：${sel.spec} / ${sel.meter} / ${sel.qty}條`;
   // 保留目前地點、人員與線材規格；米數與數量重置。
   sel={loc:sel.loc,person:sel.person,main:sel.main,sub:sel.sub,spec:sel.spec,meter:"",qty:""};
@@ -383,7 +379,7 @@ function addEntry(){
 }
 function renderEntries(){
   const e=entries();document.getElementById("entryCount").textContent=`(${activeDate} / ${e.length} 筆)`;document.getElementById("emptyEntry").classList.toggle("hidden",e.length>0);
-  document.getElementById("entryList").innerHTML=e.map((x,i)=>({x,i})).reverse().map(({x,i})=>`<div class="list-item"><div><div class="item-title">${esc(x.spec)}　${esc(x.meter)}　× ${x.qty}</div><div class="item-meta">${esc(x.loc)} / ${esc(x.person||"未指定")}</div></div><div class="item-actions"><button onclick="adj(${i},-1)">−</button><button onclick="adj(${i},1)">＋</button><button class="danger" onclick="delE(${i})">刪</button></div></div>`).join("")
+  document.getElementById("entryList").innerHTML=e.map((x,i)=>({x,i})).sort((a,b)=>{const ta=Date.parse(a.x.time||"")||0,tb=Date.parse(b.x.time||"")||0;return tb-ta||b.i-a.i}).map(({x,i})=>`<div class="list-item"><div><div class="item-title">${esc(x.spec)}　${esc(x.meter)}　× ${x.qty}</div><div class="item-meta">${esc(x.loc)} / ${esc(x.person||"未指定")}</div></div><div class="item-actions"><button onclick="adj(${i},-1)">−</button><button onclick="adj(${i},1)">＋</button><button class="danger" onclick="delE(${i})">刪</button></div></div>`).join("")
 }
 function adj(i,d){const e=entries();e[i].qty+=d;if(e[i].qty<=0)e.splice(i,1);save();renderEntries()}
 function delE(i){if(confirm("刪除這筆？")){entries().splice(i,1);save();renderEntries()}}
