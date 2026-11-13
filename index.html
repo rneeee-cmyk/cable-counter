@@ -61,17 +61,17 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 <main>
 <section id="tab-input" class="tab active">
   <div class="card">
+    <div class="step">清點日期</div>
+    <input id="workDate" type="date">
+  </div>
+
+  <div class="card">
     <div class="step">線材類型</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <button id="typeNetwork" onclick="switchCableType('network')">網路線</button>
       <button id="typeMipi" onclick="switchCableType('mipi')">MIPI</button>
     </div>
     <div class="muted" style="margin-top:8px" id="typeHint"></div>
-  </div>
-
-  <div class="card">
-    <div class="step">清點日期</div>
-    <input id="workDate" type="date">
   </div>
 
   <div class="card"><div class="step">1. 選地點</div><div id="locBtns" class="btn-grid locations"></div></div>
