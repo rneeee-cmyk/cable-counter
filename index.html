@@ -41,12 +41,34 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
   header .sub { font-size: 10px; }
   main { padding-top: 4px; }
 }
+.mipi-option{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center}
+.mipi-option .mipi-select{display:flex;align-items:center;gap:12px;text-align:left;width:100%;min-height:92px;padding:8px!important}
+.mipi-option img,.mipi-placeholder{width:82px;height:82px;flex-shrink:0;object-fit:contain;background:white;border-radius:6px}
+.mipi-placeholder{display:flex;align-items:center;justify-content:center;font-size:12px;color:#64748b;border:1px dashed #aebdce}
+.mipi-option span{overflow-wrap:anywhere}
+#photoModal .modal-panel{max-height:90vh}
+#photoImage{display:block;max-width:100%;max-height:65vh;object-fit:contain;margin:auto}
+#photoTabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+#photoDetails{text-align:center}
+#photoDetails figure{margin:12px 0 18px}
+#photoDetails figcaption{font-weight:700;margin-bottom:8px}
+#photoDetails img{display:block;margin:auto;max-width:100%;width:340px;height:auto;max-height:55vh;object-fit:contain}
+#photoDetails figure:not(:first-child) img{width:130px}
 </style>
 </head>
 <body>
 <header><div class="title">SD3_cable清點</div><div class="sub">線材規格以「CABLE_MASTER」為準</div></header>
 <main>
 <section id="tab-input" class="tab active">
+  <div class="card">
+    <div class="step">線材類型</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button id="typeNetwork" onclick="switchCableType('network')">網路線</button>
+      <button id="typeMipi" onclick="switchCableType('mipi')">MIPI</button>
+    </div>
+    <div class="muted" style="margin-top:8px" id="typeHint"></div>
+  </div>
+
   <div class="card">
     <div class="step">清點日期</div>
     <input id="workDate" type="date">
@@ -144,10 +166,20 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px
 <button class="active" onclick="showTab('input',this)">新增清點</button><button onclick="showTab('current',this)">本次明細</button><button onclick="showTab('history',this)">歷史</button><button onclick="showTab('settings',this)">設定</button>
 </nav>
 
+<div id="photoModal" class="modal hidden" onclick="if(event.target===this)closePhoto()">
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="photoTitle">
+    <div class="modal-head"><b id="photoTitle"></b><button onclick="closePhoto()">關閉</button></div>
+    <div id="photoTabs"><button id="photoWholeTab" onclick="showPhotoView('whole')">整條線照片</button><button id="photoDetailTab" onclick="showPhotoView('detail')">接頭特寫</button></div>
+    <div id="photoDetails"></div>
+    <img id="photoImage" alt="">
+    <div class="muted" style="margin-top:12px">圖片來源：MIPI cable＿20241113.xlsx。接頭圖為原表提供的辨識示意。</div>
+  </div>
+</div>
 <script>
 // ================================================================
-// 外部主檔：日後只需修改這三個 JSON
+// 外部主檔：網路線與 MIPI 分開管理。
 // cable_master.json ＝ 依線種分組的 Cable 規格 / 米數 / 總數量
+// mipi_master.json ＝ MIPI 規格 / 長度 / 總數量 / 圖片路徑
 // people_master.json ＝ 正式人員姓名
 // location_master.json ＝ 正式地點名稱
 // ================================================================
@@ -158,37 +190,61 @@ const SEED = {
   master: []
 };
 
+let cableType="network";
+let KEY="cableCounter_v1";
+const catalog={network:[],mipi:[]};
 async function loadMasterFiles(){
-  const [cableRes,peopleRes,locationRes]=await Promise.all([
+  const [cableRes,mipiRes,peopleRes,locationRes]=await Promise.all([
     fetch("./cable_master.json",{cache:"no-store"}),
+    fetch("./mipi_master.json",{cache:"no-store"}),
     fetch("./people_master.json",{cache:"no-store"}),
     fetch("./location_master.json",{cache:"no-store"})
   ]);
   if(!cableRes.ok)throw new Error("CABLE_MASTER 載入失敗");
+  if(!mipiRes.ok)throw new Error("MIPI_MASTER 載入失敗");
   if(!peopleRes.ok)throw new Error("PEOPLE_MASTER 載入失敗");
   if(!locationRes.ok)throw new Error("LOCATION_MASTER 載入失敗");
 
   const cableGroups=await cableRes.json();
+  const mipiGroups=await mipiRes.json();
   const peopleRows=await peopleRes.json();
   const locationRows=await locationRes.json();
 
-  SEED.master=[];
-  Object.values(cableGroups).forEach(group=>{
+  for(const [type,groups] of [["network",cableGroups],["mipi",mipiGroups]]){
+  catalog[type]=[];
+  Object.values(groups).forEach(group=>{
     (group.items||[]).forEach(([meter,total])=>{
-      SEED.master.push({
+      catalog[type].push({
         category:group.category,
         subtype:group.subtype||"",
         spec:group.subtype ? `${group.category} / ${group.subtype}` : group.category,
         meter,
-        total
+        total,
+        photo:group.photo||"",
+        details:group.details||[]
       });
     });
   });
+  }
+  SEED.master=clone(catalog[cableType]);
 
   SEED.people=peopleRows.map(name=>({name,status:"使用中"}));
   SEED.locations=locationRows.map(name=>String(name).trim()).filter(Boolean);
 }
-const KEY="cableCounter_v1";
+function switchCableType(type){
+  if(type===cableType || !["network","mipi"].includes(type))return;
+  save();
+  cableType=type;
+  KEY=type==="network"?"cableCounter_v1":"cableCounter_mipi_v1";
+  SEED.master=clone(catalog[type]);
+  state=loadState();
+  sel={loc:"",person:"",main:"",sub:"",spec:"",meter:"",qty:""};
+  document.getElementById("historyDate").value="";
+  document.getElementById("moveDate").value="";
+  document.getElementById("addMsg").textContent="";
+  closePhoto();
+  render();renderEntries();renderHistory();renderSettings();
+}
 let state=null;
 let sel={loc:"",person:"",main:"",sub:"",spec:"",meter:"",qty:""};
 let activeDate=new Date().toISOString().slice(0,10);
@@ -234,7 +290,7 @@ function loadState(){
     history:[]
   };
 }
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function save(){state.cableType=cableType;localStorage.setItem(KEY,JSON.stringify(state))}
 function entries(){if(!state.sessions[activeDate])state.sessions[activeDate]=[];return state.sessions[activeDate]}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function labelMain(cat){return cat==="CAT5E"?"5E":cat==="CAT6A"?"6A":cat==="CAT6"?"6":cat==="CAT7"?"7":cat}
@@ -250,7 +306,50 @@ function btn(t,a,fn){
   return `<button class="${a?"active":""}" onclick='${safeFn}'>${esc(t)}</button>`;
 }
 
+function mipiOption(c){
+  const item=catalog.mipi.find(m=>m.spec===c)||{};
+  const photo=item.photo;
+  const visual=photo?`<img src="${esc(photo)}" alt="${esc(c)} 實物照片" onerror="this.classList.add('hidden');this.nextElementSibling.classList.remove('hidden')"><span class="mipi-placeholder hidden">照片未載入</span>`:'<span class="mipi-placeholder">尚無照片</span>';
+  const select=btn(c,sel.spec===c,`pickOther(${JSON.stringify(c)})`)
+    .replace('class="','class="mipi-select ')
+    .replace('>'+esc(c)+'</button>','>'+visual+'<span>'+esc(c)+'</span></button>');
+  return `<div class="mipi-option">${select}${photo||(item.details||[]).length?btn("放大",false,`openPhoto(${JSON.stringify(c)})`):""}</div>`;
+}
+let photoReturnFocus=null;
+function openPhoto(spec){
+  photoReturnFocus=document.activeElement;
+  const img=document.getElementById("photoImage");
+  const photo=(catalog.mipi.find(m=>m.spec===spec)||{}).photo;
+  if(photo)img.src=photo;else img.removeAttribute("src");
+  img.alt=photo?spec+" 實物照片":"此規格尚無整條線照片";
+  document.getElementById("photoWholeTab").disabled=!photo;
+  document.getElementById("photoTitle").textContent=spec;
+  const details=(catalog.mipi.find(m=>m.spec===spec)||{}).details||[];
+  document.getElementById("photoDetails").innerHTML=details.length?details.map(d=>`<figure><figcaption>${esc(d.label)}</figcaption><img src="${esc(d.src)}" alt="${esc(spec)} ${esc(d.label)}"></figure>`).join(""):'<div class="muted">此規格尚無接頭特寫。</div>';
+  showPhotoView(details.length?"detail":"whole");
+  document.getElementById("photoModal").classList.remove("hidden");
+  document.querySelector("#photoModal button").focus();
+}
+function showPhotoView(view){
+  document.getElementById("photoImage").classList.toggle("hidden",view!=="whole");
+  document.getElementById("photoDetails").classList.toggle("hidden",view!=="detail");
+  document.getElementById("photoWholeTab").classList.toggle("active",view==="whole");
+  document.getElementById("photoDetailTab").classList.toggle("active",view==="detail");
+}
+function closePhoto(){
+  document.getElementById("photoModal").classList.add("hidden");
+  if(photoReturnFocus)photoReturnFocus.focus();
+}
+document.addEventListener("keydown",event=>{if(event.key==="Escape")closePhoto()});
 function render(){
+  document.getElementById("typeNetwork").classList.toggle("active",cableType==="network");
+  document.getElementById("typeMipi").classList.toggle("active",cableType==="mipi");
+  const typeName=cableType==="mipi"?"MIPI":"網路線";
+  document.querySelector("header .title").textContent="SD3 cable 清點・"+typeName;
+  document.querySelector("header .sub").textContent="目前明細、歷史與匯出："+typeName;
+  document.getElementById("typeHint").textContent="目前清點："+typeName+"，兩類線材的紀錄與 Excel 各自分開。";
+
+
   const de=document.getElementById("workDate");de.value=activeDate;de.onchange=()=>{activeDate=de.value;renderEntries()};
   document.getElementById("locBtns").innerHTML=getSelectableLocations().map(x=>btn(x,sel.loc===x,`pickLoc(${JSON.stringify(x)})`)).join("");
   renderPersonActions();
@@ -260,6 +359,10 @@ function render(){
     primary.map(c=>btn(labelMain(c),sel.main===c,`pickMain(${JSON.stringify(c)})`)).join("")+
     btn("其他",sel.main==="其他",`pickMain("其他")`);
 
+  if(cableType==="mipi"){
+    document.getElementById("catBtns").style.gridTemplateColumns="1fr";
+    document.getElementById("catBtns").innerHTML=[...new Set(state.master.map(m=>m.spec))].map(mipiOption).join("");
+  }else document.getElementById("catBtns").style.gridTemplateColumns="";
   renderSubs();renderMeters();renderQty();
 }
 // ================================================================
@@ -316,6 +419,7 @@ function pickLocalPerson(n){sel.person=n;renderPersonActions()}
 
 function pickMain(c){sel.main=c;sel.sub="";sel.spec="";sel.meter="";sel.qty="";render()}
 function renderSubs(){
+  if(cableType==="mipi"){document.getElementById("subCard").classList.add("hidden");return}
   const card=document.getElementById("subCard"),box=document.getElementById("subBtns");
   if(!sel.main){card.classList.add("hidden");return}
   card.classList.remove("hidden");
@@ -526,7 +630,7 @@ function renderHistory(){
     <div style="font-weight:800;font-size:16px;margin-bottom:10px">${esc(formatHistoryDate(selected))} 清點結果</div>
     <table>
       <thead><tr>
-        <th>網路線規格</th>
+        <th>${cableType==="mipi"?"MIPI 線材規格":"網路線規格"}</th>
         <th>米數</th>
         <th>總數量</th>
         <th>清點數量</th>
@@ -611,7 +715,7 @@ function deleteLocalPerson(i){
 // ================================================================
 function csvCell(v){v=String(v??"");return /[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v}
 function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-function exportCurrentCsv(){const r=[["清點日期","地點","人員","線材規格","米數","數量"],...entries().map(x=>[activeDate,x.loc,x.person||"未指定",x.spec,x.meter,x.qty])];download(`本次清點明細_${activeDate}.csv`,"\ufeff"+r.map(x=>x.map(csvCell).join(",")).join("\r\n"),"text/csv;charset=utf-8")}
+function exportCurrentCsv(){const r=[["清點日期","地點","人員","線材規格","米數","數量"],...entries().map(x=>[activeDate,x.loc,x.person||"未指定",x.spec,x.meter,x.qty])];download(`${cableType==="mipi"?"MIPI":"網路線"}_本次清點明細_${activeDate}.csv`,"\ufeff"+r.map(x=>x.map(csvCell).join(",")).join("\r\n"),"text/csv;charset=utf-8")}
 function xlsxCol(n){
   let s="";
   for(n++;n;n=Math.floor((n-1)/26))s=String.fromCharCode(65+(n-1)%26)+s;
@@ -706,7 +810,7 @@ function buildReportRows(date){
   });
 
   const dateHeader=date.replaceAll("-","/");
-  const headers=["網路線規格","米數","總數量",`${dateHeader}清點數量`,"差異","位置",...Array(Math.max(0,maxPos-1)).fill("")];
+  const headers=[(cableType==="mipi"?"MIPI 線材規格":"網路線規格"),"米數","總數量",`${dateHeader}清點數量`,"差異","位置",...Array(Math.max(0,maxPos-1)).fill("")];
 
   const rows=[headers];
   let lastSpec="";
@@ -731,10 +835,10 @@ function exportReport(allDates=false){
   const y=now.getFullYear();
   const mo=String(now.getMonth()+1).padStart(2,"0");
   const da=String(now.getDate()).padStart(2,"0");
-  download(`cable清點${y}${mo}${da}${allDates?"_全部日期":""}.xlsx`,exportExcelXlsx(sheets),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  download(`${cableType==="mipi"?"MIPI":"網路線"}清點${y}${mo}${da}${allDates?"_全部日期":""}.xlsx`,exportExcelXlsx(sheets),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 }
 function resetCountingRecords(){
-  if(!confirm("確定要清除這台裝置的所有 Cable 清點紀錄？\n\n本機自訂地點會保留。"))return;
+  if(!confirm(`確定要清除這台裝置的所有${cableType==="mipi"?" MIPI":"網路線"}清點紀錄？\n\n本機自訂地點會保留。`))return;
   if(!confirm("再次確認：真的要清除全部清點紀錄？"))return;
   state.sessions={};
   state.history=[];
@@ -746,7 +850,7 @@ function resetCountingRecords(){
   alert("已清除本機所有清點紀錄。");
 }
 
-function backupJson(){download(`線材清點備份_${activeDate}.json`,JSON.stringify(state,null,2),"application/json;charset=utf-8")}
+function backupJson(){download(`${cableType==="mipi"?"MIPI":"網路線"}_清點備份_${activeDate}.json`,JSON.stringify({...state,cableType},null,2),"application/json;charset=utf-8")}
 function restoreJson(ev){
   const f=ev.target.files[0];
   if(!f)return;
@@ -755,6 +859,10 @@ function restoreJson(ev){
     try{
       const o=JSON.parse(rd.result);
       if(!o || typeof o!=="object") throw new Error("invalid");
+      if((o.cableType||"network")!==cableType){
+        alert("此備份的線材類型不同，請先切換到對應的網路線／MIPI 再匯入。舊版備份請在網路線模式匯入。");
+        return;
+      }
       if(confirm("匯入備份會更新目前清點資料。線材主檔與總數量仍固定使用目前網頁最新版，確定匯入？")){
         state={
           version:4,
@@ -783,14 +891,14 @@ async function initApp(){
     // 清點歷史仍讀取原本 cableCounter_v1，不更換抽屜名稱。
     state.master=clone(SEED.master);
     state.people=clone(SEED.people);
-    localStorage.setItem(KEY,JSON.stringify(state));
+    save();
     render();renderEntries();renderHistory();renderSettings();
     document.body.dataset.appReady="1";
   }catch(err){
     console.error(err);
     document.querySelector("main").innerHTML=
       `<div class="card"><div class="step">主檔載入失敗</div>
-       <div class="muted">請確認 index.html、cable_master.json、people_master.json、location_master.json 四個檔案都放在 GitHub 同一層，再重新整理。</div></div>`;
+       <div class="muted">請確認 index.html、cable_master.json、mipi_master.json、people_master.json、location_master.json 都放在 GitHub 同一層，再重新整理。</div></div>`;
   }
 }
 initApp();

@@ -1,0 +1,319 @@
+{
+  "fakra_jack_jack": {
+    "category": "FAKRA JACK CABLE CNC VERSION_DACAR 302 母母",
+    "subtype": "",
+    "items": [
+      [
+        "1M",
+        1
+      ],
+      [
+        "2M",
+        1
+      ],
+      [
+        "3M",
+        1
+      ],
+      [
+        "4M",
+        1
+      ],
+      [
+        "5M",
+        1
+      ],
+      [
+        "6M",
+        1
+      ],
+      [
+        "7M",
+        1
+      ],
+      [
+        "8M",
+        1
+      ],
+      [
+        "9M",
+        1
+      ],
+      [
+        "10M",
+        1
+      ],
+      [
+        "11M",
+        1
+      ],
+      [
+        "12M",
+        1
+      ],
+      [
+        "13M",
+        1
+      ],
+      [
+        "14M",
+        1
+      ],
+      [
+        "15M",
+        1
+      ]
+    ],
+    "photo": "images/mipi/fakra_jack_jack_whole.jpg",
+    "details": [
+      {
+        "label": "接頭特寫",
+        "src": "images/mipi/fakra_jack_jack_connector.png"
+      },
+      {
+        "label": "接頭端面示意",
+        "src": "images/mipi/fakra_jack_jack_end_face.png"
+      }
+    ]
+  },
+  "fakra_jack_plug": {
+    "category": "FAKRA JACK CNC T0 FAKRA PLUG CABLE _DACAR 302 公母",
+    "subtype": "",
+    "items": [
+      [
+        "1M",
+        4
+      ],
+      [
+        "2M",
+        4
+      ],
+      [
+        "3M",
+        4
+      ],
+      [
+        "4M",
+        4
+      ],
+      [
+        "5M",
+        1
+      ],
+      [
+        "6M",
+        1
+      ],
+      [
+        "7M",
+        1
+      ],
+      [
+        "8M",
+        1
+      ],
+      [
+        "9M",
+        1
+      ],
+      [
+        "10M",
+        1
+      ]
+    ],
+    "photo": "images/mipi/fakra_jack_plug_whole.jpg",
+    "details": [
+      {
+        "label": "接頭特寫",
+        "src": "images/mipi/fakra_jack_plug_connector.png"
+      },
+      {
+        "label": "接頭端面示意",
+        "src": "images/mipi/fakra_jack_plug_end_face.png"
+      }
+    ]
+  },
+  "hmtd_jack_jack": {
+    "category": "HMTD-N JACK CABLE 母母",
+    "subtype": "",
+    "items": [
+      [
+        "1M",
+        1
+      ],
+      [
+        "2M",
+        1
+      ],
+      [
+        "3M",
+        1
+      ],
+      [
+        "4M",
+        1
+      ],
+      [
+        "5M",
+        1
+      ],
+      [
+        "6M",
+        1
+      ],
+      [
+        "7M",
+        1
+      ],
+      [
+        "8M",
+        1
+      ],
+      [
+        "9M",
+        1
+      ],
+      [
+        "10M",
+        2
+      ]
+    ],
+    "photo": "images/mipi/hmtd_jack_jack_whole.jpg",
+    "details": [
+      {
+        "label": "接頭特寫",
+        "src": "images/mipi/hmtd_jack_jack_connector.png"
+      },
+      {
+        "label": "接頭端面示意",
+        "src": "images/mipi/hmtd_jack_jack_end_face.png"
+      }
+    ]
+  },
+  "hmtd_jack_plug": {
+    "category": "HMTD-N JACK TO HMTD PLUG CABLE 公母",
+    "subtype": "",
+    "items": [
+      [
+        "1M",
+        4
+      ],
+      [
+        "2M",
+        4
+      ],
+      [
+        "3M",
+        4
+      ],
+      [
+        "4M",
+        4
+      ],
+      [
+        "5M",
+        1
+      ],
+      [
+        "6M",
+        1
+      ],
+      [
+        "7M",
+        1
+      ],
+      [
+        "8M",
+        1
+      ],
+      [
+        "9M",
+        1
+      ],
+      [
+        "10M",
+        1
+      ]
+    ],
+    "photo": "images/mipi/hmtd_jack_plug_whole.jpg",
+    "details": [
+      {
+        "label": "接頭特寫",
+        "src": "images/mipi/hmtd_jack_plug_connector.png"
+      },
+      {
+        "label": "接頭端面示意",
+        "src": "images/mipi/hmtd_jack_plug_end_face.png"
+      }
+    ]
+  },
+  "hsd_jack_jack": {
+    "category": "HSD STRAIGHT JACK CABLE 公公",
+    "subtype": "",
+    "items": [
+      [
+        "1M",
+        1
+      ],
+      [
+        "2M",
+        1
+      ],
+      [
+        "3M",
+        1
+      ],
+      [
+        "4M",
+        1
+      ],
+      [
+        "5M",
+        1
+      ],
+      [
+        "6M",
+        1
+      ],
+      [
+        "7M",
+        1
+      ],
+      [
+        "8M",
+        1
+      ],
+      [
+        "9M",
+        1
+      ],
+      [
+        "10M",
+        2
+      ]
+    ],
+    "photo": "images/mipi/hsd_jack_jack_whole.jpg",
+    "details": [
+      {
+        "label": "接頭特寫",
+        "src": "images/mipi/hsd_jack_jack_connector.png"
+      },
+      {
+        "label": "線材截面示意",
+        "src": "images/mipi/hsd_jack_jack_cross_section.png"
+      }
+    ]
+  },
+  "hsd_female_female": {
+    "category": "HSD STRAIGHT JACK CABLE 母母",
+    "subtype": "",
+    "items": [
+      [
+        "15CM",
+        1
+      ]
+    ],
+    "photo": "",
+    "details": []
+  }
+}
